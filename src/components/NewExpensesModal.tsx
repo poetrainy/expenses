@@ -17,8 +17,7 @@ import { ExpensesCash } from "~/types/Expenses";
 const NUMBERS = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
 const ARITHMETICS: string[] = ["/", "*", "-", "+"];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Arithmetic = () => (
+export const Arithmetic = () => (
   <VStack gap="4px" p={0} w="calc(100% * 0.2 + 2px)">
     {ARITHMETICS.map((arithmetic) => (
       <Center
