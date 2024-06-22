@@ -59,7 +59,7 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
       size={["full", "3xl"]}
       heading="登録する"
     >
-      <Tabs isFitted>
+      <Tabs isFitted defaultIndex={type === "expenses" ? 0 : 1}>
         <TabList>
           <Tab onClick={() => setType("expenses")}>支出</Tab>
           <Tab onClick={() => setType("income")}>収入</Tab>
