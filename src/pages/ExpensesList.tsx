@@ -143,7 +143,7 @@ const ExpensesList: FC = () => {
           <TabPanels mt="16px">
             <TabPanel p={0}>
               {cash.length ? (
-                <VStack as="ul" alignItems="stretch" gap="20px">
+                <VStack as="ul" alignItems="stretch" gap="16px">
                   {cash.map((item) => (
                     <Box key={item.id} as="li" w="100%">
                       <Flex
