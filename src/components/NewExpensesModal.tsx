@@ -1,6 +1,5 @@
 import { FC, useState } from "react";
 import {
-  Box,
   Button,
   Center,
   Flex,
@@ -16,7 +15,25 @@ import OriginalModal from "~/components/OriginalModal";
 import { ExpensesCash } from "~/types/Expenses";
 
 const NUMBERS = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
-const ARITHMETICS = ["/", "*", "-", "+"];
+const ARITHMETICS: string[] = ["/", "*", "-", "+"];
+
+const Arithmetic = () => (
+  <VStack gap="4px" p={0} w="calc(100% * 0.2 + 2px)">
+    {ARITHMETICS.map((arithmetic) => (
+      <Center
+        as="button"
+        type="button"
+        key={arithmetic}
+        w="100%"
+        h="calc(100% * 4 * 2 / 3)"
+        bg="gray.200"
+        fontSize="20px"
+      >
+        {arithmetic}
+      </Center>
+    ))}
+  </VStack>
+);
 
 type Props = {
   isOpen: boolean;
@@ -104,7 +121,12 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
           </Text>
         </Flex>
         <Flex gap="4px" w="100%">
-          <Flex flexWrap="wrap" gap="4px" w="calc(100% * 0.8 + 2px)">
+          <Flex
+            flexWrap="wrap"
+            gap="4px"
+            w="100%"
+            // w="calc(100% * 0.8 + 2px)"
+          >
             {NUMBERS.map((number) => (
               <Center
                 as="button"
@@ -131,21 +153,7 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
               0
             </Center>
           </Flex>
-          <VStack gap="4px" p={0} w="calc(100% * 0.2 + 2px)">
-            {ARITHMETICS.map((arithmetic) => (
-              <Center
-                as="button"
-                type="button"
-                key={arithmetic}
-                w="100%"
-                h="calc(100% * 4 * 2 / 3)"
-                bg="gray.200"
-                fontSize="20px"
-              >
-                {arithmetic}
-              </Center>
-            ))}
-          </VStack>
+          {/* <Arithmetic /> */}
         </Flex>
       </VStack>
       <Spacer />
