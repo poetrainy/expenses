@@ -15,7 +15,7 @@ type Props = ModalProps & {
 };
 
 const OriginalModal: FC<Props> = ({ heading,...props }) => (
-  <Modal {...props}>
+  <Modal isCentered {...props}>
     <ModalOverlay />
     <ModalContent>
       <ModalHeader
@@ -33,7 +33,7 @@ const OriginalModal: FC<Props> = ({ heading,...props }) => (
         w="100%"
         maxW="600px"
         m="auto"
-        p="0 16px"
+        p="0 16px 16px"
         pos="relative"
       >
         {props.children}

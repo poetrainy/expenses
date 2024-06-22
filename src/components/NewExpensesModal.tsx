@@ -5,6 +5,7 @@ import {
   Center,
   Flex,
   Input,
+  Spacer,
   Tab,
   TabList,
   Tabs,
@@ -38,7 +39,7 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
     <OriginalModal
       isOpen={isOpen}
       onClose={onClose}
-      size="full"
+      size={["full", "3xl"]}
       heading="登録する"
     >
       <Tabs isFitted>
@@ -47,19 +48,32 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
           <Tab onClick={() => setType("income")}>収入</Tab>
         </TabList>
       </Tabs>
-      <Input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-      />
-      <Input
-        type="text"
-        value={purpose}
-        onChange={(e) => setPurpose(e.target.value)}
-        placeholder="e.g. やまもとクリニック"
-        textAlign="center"
-      />
-      <VStack gap="16px" w="100%" p={0}>
+      <VStack alignItems="stretch">
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text color="gray.600" fontWeight="bold">
+            日付
+          </Text>
+          <Input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            w="80%"
+          />
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text color="gray.600" fontWeight="bold">
+            内容
+          </Text>
+          <Input
+            type="text"
+            value={purpose}
+            onChange={(e) => setPurpose(e.target.value)}
+            w="80%"
+            placeholder="e.g. やまもとクリニック"
+          />
+        </Flex>
+      </VStack>
+      <VStack gap="16px" w="100%">
         <Flex
           justifyContent="space-between"
           alignItems="center"
@@ -81,7 +95,10 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
             <Text as="span" color="gray.500">
               ¥
             </Text>
-            <Text as="span" color="gray.800">
+            <Text
+              as="span"
+              color={type === "expenses" ? "gray.800" : "green.400"}
+            >
               {Number(result.length ? result : "0").toLocaleString()}
             </Text>
           </Text>
@@ -131,30 +148,21 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
           </VStack>
         </Flex>
       </VStack>
-      <Box
+      <Spacer />
+      <Button
         w="100%"
-        maxW="600px"
-        bg="white"
-        m="0 -16px"
-        p="16px"
-        pos="fixed"
-        inset="auto auto 0 auto"
+        type="button"
+        onClick={() => {
+          onSave(`${date}T15:00:00.000Z`, type, purpose, Number(result));
+          setDate("");
+          setType("expenses");
+          setPurpose("");
+          setResult("");
+        }}
+        isDisabled={!date.length || !purpose.length || !result.length}
       >
-        <Button
-          w="100%"
-          type="button"
-          onClick={() => {
-            onSave(`${date}T15:00:00.000Z`, type, purpose, Number(result));
-            setDate("");
-            setType("expenses");
-            setPurpose("");
-            setResult("");
-          }}
-          isDisabled={!date.length || !purpose.length || !result.length}
-        >
-          保存する
-        </Button>
-      </Box>
+        保存する
+      </Button>
     </OriginalModal>
   );
 };
