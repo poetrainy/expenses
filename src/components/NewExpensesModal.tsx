@@ -161,7 +161,7 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
         w="100%"
         type="button"
         onClick={() => {
-          onSave(`${date}T15:00:00.000Z`, type, purpose, Number(result));
+          onSave(`${date}`, type, purpose, Number(result));
           setDate("");
           setType("expenses");
           setPurpose("");
