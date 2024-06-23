@@ -30,7 +30,7 @@ const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => (
           <ChakraUILink
             as={RouterLink}
             to={`/${item.join("/")}`}
-            onClick={() => onClose()}
+            state={{ isOpenMenuDrawer: false }}
           >{`${item[0]}年${item[1]}月`}</ChakraUILink>
         </Box>
       ))}
@@ -43,7 +43,11 @@ const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => (
       <VStack as="ul" alignItems="stretch" gap="16px" p={0}>
         {MENU_SETTINGS.map(({ label, path }) => (
           <Box as="li" key={path}>
-            <ChakraUILink as={RouterLink} to={path}>
+            <ChakraUILink
+              as={RouterLink}
+              to={path}
+              state={{ isOpenMenuDrawer: false }}
+            >
               {label}
             </ChakraUILink>
           </Box>

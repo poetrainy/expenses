@@ -1,9 +1,10 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import {
   ActionFunctionArgs,
   Params,
   redirect,
   useLoaderData,
+  useLocation,
   useSubmit,
 } from "react-router-dom";
 import {
@@ -19,6 +20,7 @@ import {
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import {
   getExpensesAllCard,
   getExpensesAllCash,
@@ -26,14 +28,13 @@ import {
   getExpensesFilteredCash,
   saveExpensesCash,
 } from "~/api/expenses";
-import { LoaderData } from "~/types";
+import { EXPENSES_CARD_PROVIDERS } from "~/constants/expenses";
 import FloatingButton from "~/components/FloatingButton";
 import NewExpensesModal from "~/components/NewExpensesModal";
-import { formatDate } from "~/libs/format";
-import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
-import { EXPENSES_CARD_PROVIDERS } from "~/constants/expenses";
 import MenuDrawer from "~/components/MenuDrawer";
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { formatDate } from "~/libs/format";
+import { LoaderData } from "~/types";
+import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -89,7 +90,30 @@ const ExpensesList: FC = () => {
   const { cash, card, archives, params } = useLoaderData() as LoaderData<
     typeof loader
   >;
+  const { state } = useLocation();
   const submit = useSubmit();
+
+  const {
+    isOpen: isOpenNewExpensesModal,
+    onOpen: onOpenNewExpensesModal,
+    onClose: onCloseNewExpensesModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenMenuDrawer,
+    onOpen: onOpenMenuDrawer,
+    onClose: onCloseMenuDrawer,
+  } = useDisclosure();
+
+  useEffect(() => {
+    if (!state) {
+      return;
+    }
+
+    if (state.isOpenMenuDrawer === false) {
+      onCloseMenuDrawer();
+    }
+  }, [onCloseMenuDrawer, state]);
 
   const onExpensesSave = (
     date: string,
@@ -113,18 +137,6 @@ const ExpensesList: FC = () => {
 
     onCloseNewExpensesModal();
   };
-
-  const {
-    isOpen: isOpenNewExpensesModal,
-    onOpen: onOpenNewExpensesModal,
-    onClose: onCloseNewExpensesModal,
-  } = useDisclosure();
-
-  const {
-    isOpen: isOpenMenuDrawer,
-    onOpen: onOpenMenuDrawer,
-    onClose: onCloseMenuDrawer,
-  } = useDisclosure();
 
   const total = [
     ...cash.map(({ type, amount }) =>
