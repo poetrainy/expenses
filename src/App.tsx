@@ -9,13 +9,13 @@ import ExpensesList, {
   action as actionExpensesList,
   loader as loaderExpensesList,
 } from "~/pages/ExpensesList";
-import Root from "~/pages/Root";
+import Root, { loader as loaderRoot } from "~/pages/Root";
 import { getPath } from "~/libs/getPath";
 
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<Root />}>
+      <Route path="/" element={<Root />} loader={loaderRoot}>
         <Route
           path="/"
           element={<div></div>}

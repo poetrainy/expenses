@@ -1,16 +1,14 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import {
   ActionFunctionArgs,
   Params,
   redirect,
   useLoaderData,
-  useLocation,
   useSubmit,
 } from "react-router-dom";
 import {
   Box,
   Flex,
-  IconButton,
   Tab,
   TabList,
   TabPanel,
@@ -20,7 +18,6 @@ import {
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
 import {
   getExpensesAllCard,
   getExpensesAllCash,
@@ -31,7 +28,6 @@ import {
 import { EXPENSES_CARD_PROVIDERS } from "~/constants/expenses";
 import FloatingButton from "~/components/FloatingButton";
 import NewExpensesModal from "~/components/NewExpensesModal";
-import MenuDrawer from "~/components/MenuDrawer";
 import { formatDate } from "~/libs/format";
 import { LoaderData } from "~/types";
 import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
@@ -87,10 +83,7 @@ export const loader = async ({ params }: { params: Params<string> }) => {
 };
 
 const ExpensesList: FC = () => {
-  const { cash, card, archives, params } = useLoaderData() as LoaderData<
-    typeof loader
-  >;
-  const { state } = useLocation();
+  const { cash, card, params } = useLoaderData() as LoaderData<typeof loader>;
   const submit = useSubmit();
 
   const {
@@ -98,22 +91,6 @@ const ExpensesList: FC = () => {
     onOpen: onOpenNewExpensesModal,
     onClose: onCloseNewExpensesModal,
   } = useDisclosure();
-
-  const {
-    isOpen: isOpenMenuDrawer,
-    onOpen: onOpenMenuDrawer,
-    onClose: onCloseMenuDrawer,
-  } = useDisclosure();
-
-  useEffect(() => {
-    if (!state) {
-      return;
-    }
-
-    if (state.isOpenMenuDrawer === false) {
-      onCloseMenuDrawer();
-    }
-  }, [onCloseMenuDrawer, state]);
 
   const onExpensesSave = (
     date: string,
@@ -147,11 +124,6 @@ const ExpensesList: FC = () => {
 
   return (
     <>
-      <IconButton
-        aria-label="メニューを開く"
-        icon={<HamburgerIcon />}
-        onClick={() => onOpenMenuDrawer()}
-      />
       <VStack alignItems="stretch" gap="32px">
         <VStack alignItems="center" gap="8px">
           <Text
@@ -244,11 +216,6 @@ const ExpensesList: FC = () => {
           </TabPanels>
         </Tabs>
       </VStack>
-      <MenuDrawer
-        isOpen={isOpenMenuDrawer}
-        onClose={onCloseMenuDrawer}
-        archives={archives}
-      />
       <NewExpensesModal
         isOpen={isOpenNewExpensesModal}
         onClose={onCloseNewExpensesModal}
