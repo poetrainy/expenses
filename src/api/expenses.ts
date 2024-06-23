@@ -17,6 +17,7 @@ export const getExpensesAllCash: () => Promise<
       queries: {
         offset: 0,
         limit: 100,
+        orders: "-date",
       },
     })
   ).contents as ExpensesCashType[];
@@ -35,6 +36,7 @@ export const getExpensesFilteredCash: (
         offset: 0,
         limit: 100,
         filters: `date[begins_with]${year}-${month}`,
+        orders: "-date",
       },
     })
   ).contents as ExpensesCashType[];
@@ -95,6 +97,7 @@ export const getExpensesAllCard: () => Promise<
       queries: {
         offset: 0,
         limit: 100,
+        orders: "-date",
       },
     })
   ).contents as ExpensesCardType[];
@@ -113,6 +116,7 @@ export const getExpensesFilteredCard: (
         offset: 0,
         limit: 100,
         filters: `date[begins_with]${year}-${month}`,
+        orders: "-date",
       },
     })
   ).contents as ExpensesCardType[];
