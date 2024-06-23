@@ -21,7 +21,6 @@ import {
 import {
   getExpensesAllCard,
   getExpensesAllCash,
-  getExpensesCardProvider,
   getExpensesFilteredCard,
   getExpensesFilteredCash,
   saveExpensesCash,
@@ -31,6 +30,7 @@ import FloatingButton from "~/components/FloatingButton";
 import NewExpensesModal from "~/components/NewExpensesModal";
 import { formatDate } from "~/libs/format";
 import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
+import { EXPENSES_CARD_PROVIDERS } from "~/constants/expenses";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -53,8 +53,6 @@ export const loader = async ({ params }: { params: Params<string> }) => {
   const year = params.year!;
   const month = params.month!;
 
-  const cardProvider = await getExpensesCardProvider();
-
   const allCash = await getExpensesAllCash();
   const filteredCash = await getExpensesFilteredCash(
     year,
@@ -72,15 +70,12 @@ export const loader = async ({ params }: { params: Params<string> }) => {
     allCash,
     card: filteredCard,
     allCard,
-    cardProvider,
     params: { year, month },
   };
 };
 
 const ExpensesList: FC = () => {
-  const { cash, card, cardProvider, params } = useLoaderData() as LoaderData<
-    typeof loader
-  >;
+  const { cash, card, params } = useLoaderData() as LoaderData<typeof loader>;
   const submit = useSubmit();
 
   const onExpensesSave = (
@@ -193,18 +188,18 @@ const ExpensesList: FC = () => {
             </TabPanel>
             <TabPanel p={0}>
               <VStack alignItems="stretch" gap="20px">
-                {cardProvider.map((item) => (
+                {EXPENSES_CARD_PROVIDERS.map((provider) => (
                   <Flex
-                    key={item.id}
+                    key={provider}
                     alignItems="center"
                     justifyContent="space-between"
                     h="44px"
                   >
                     <Text color="gray.600" fontSize="14px" fontWeight="bold">
-                      {item.name}
+                      {provider}
                     </Text>
                     <Text color="gray.700" fontSize="14px" fontWeight="bold">
-                      {`${card.find(({ cardProvider }) => cardProvider.id === item.id)?.amount.toLocaleString() ?? "（未登録）"}`}
+                      {`${card.find(({ cardProvider }) => cardProvider.includes(provider))?.amount.toLocaleString() ?? "（未登録）"}`}
                     </Text>
                   </Flex>
                 ))}

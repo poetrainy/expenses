@@ -2,9 +2,7 @@ import { MicroCMSType } from "~/types/MicroCMS";
 
 export type ExpensesCash = "expenses" | "income";
 
-export type ExpensesCardProviderType = MicroCMSType & {
-  name: string;
-};
+export type ExpensesCardProvider = "楽天カード" | "エポスカード";
 
 export type ExpensesCashBaseType = {
   date: string;
@@ -17,7 +15,7 @@ export type ExpensesCashBaseType = {
 export type ExpensesCardBaseType = {
   date: string;
   amount: number;
-  cardProvider: ExpensesCardProviderType;
+  cardProvider: ExpensesCardProvider[];
 };
 
 export type ExpensesCashType = MicroCMSType & ExpensesCashBaseType;

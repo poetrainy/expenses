@@ -2,7 +2,6 @@ import { WriteApiRequestResult } from "microcms-js-sdk";
 import { client } from "~/libs/client";
 import {
   ExpensesCardBaseType,
-  ExpensesCardProviderType,
   ExpensesCardType,
   ExpensesCashBaseType,
   ExpensesCashType,
@@ -166,20 +165,4 @@ export const deleteExpensesCard = async (id: string) => {
     endpoint: "card",
     contentId: id,
   });
-};
-
-export const getExpensesCardProvider: () => Promise<
-  ExpensesCardProviderType[]
-> = async () => {
-  const response = (
-    await client.get({
-      endpoint: "card_provider",
-      queries: {
-        offset: 0,
-        limit: 100,
-      },
-    })
-  ).contents as ExpensesCardProviderType[];
-
-  return response;
 };
