@@ -4,7 +4,7 @@ import { Center, Heading, IconButton, useDisclosure } from "@chakra-ui/react";
 import { EditIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { saveExpensesCash } from "~/api/expenses";
 import MenuDrawer from "~/components/MenuDrawer";
-import NewExpensesModal from "~/components/NewExpensesModal";
+import OperationExpensesModal from "~/components/OperationExpensesModal";
 import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
 
 type Props = {
@@ -14,6 +14,7 @@ type Props = {
 const Header: FC<Props> = ({ archives }) => {
   const { state } = useLocation();
   const revalidator = useRevalidator();
+
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const {
@@ -23,9 +24,9 @@ const Header: FC<Props> = ({ archives }) => {
   } = useDisclosure();
 
   const {
-    isOpen: isOpenNewExpensesModal,
-    onOpen: onOpenNewExpensesModal,
-    onClose: onCloseNewExpensesModal,
+    isOpen: isOpenOperationExpensesModal,
+    onOpen: onOpenOperationExpensesModal,
+    onClose: onCloseOperationExpensesModal,
   } = useDisclosure();
 
   useEffect(() => {
@@ -55,7 +56,7 @@ const Header: FC<Props> = ({ archives }) => {
       } satisfies ExpensesCashBaseType);
 
       revalidator.revalidate();
-      onCloseNewExpensesModal();
+      onCloseOperationExpensesModal();
     } catch (e) {
       console.error(e);
     } finally {
@@ -91,7 +92,7 @@ const Header: FC<Props> = ({ archives }) => {
           icon={<EditIcon />}
           variant="ghost"
           aria-label="収支を登録する"
-          onClick={() => onOpenNewExpensesModal()}
+          onClick={() => onOpenOperationExpensesModal()}
           m="auto"
           pos="absolute"
           inset="0 16px 0 auto"
@@ -102,9 +103,10 @@ const Header: FC<Props> = ({ archives }) => {
         onClose={onCloseMenuDrawer}
         archives={archives}
       />
-      <NewExpensesModal
-        isOpen={isOpenNewExpensesModal}
-        onClose={onCloseNewExpensesModal}
+      <OperationExpensesModal
+        variant="new"
+        isOpen={isOpenOperationExpensesModal}
+        onClose={onCloseOperationExpensesModal}
         isSubmitting={isSubmitting}
         onSave={(date, type, purpose, amount) =>
           onExpensesSave(date, type, purpose, amount)

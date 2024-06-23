@@ -39,7 +39,7 @@ const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => {
     <DrawerBase heading="Menu" isOpen={isOpen} onClose={onClose}>
       <VStack gap="24px" alignItems="stretch">
         {MENU_CONTENTS.map(({ heading, contents }) => (
-          <VStack alignItems="stretch">
+          <VStack key={heading} alignItems="stretch">
             <Text
               as="p"
               key={heading}

@@ -1,5 +1,9 @@
-import { FC } from "react";
-import { Params, useLoaderData } from "react-router-dom";
+import { FC, useState } from "react";
+import {
+  Params,
+  useLoaderData,
+  useRevalidator,
+} from "react-router-dom";
 import {
   Box,
   Flex,
@@ -16,10 +20,17 @@ import {
   getExpensesAllCash,
   getExpensesFilteredCard,
   getExpensesFilteredCash,
+  updateExpensesCash,
 } from "~/api/expenses";
 import { EXPENSES_CARD_PROVIDERS } from "~/constants/expenses";
 import { formatDate } from "~/libs/format";
 import { LoaderData } from "~/types";
+import {
+  ExpensesCash,
+  ExpensesCashBaseType,
+  ExpensesCashType,
+} from "~/types/Expenses";
+import OperationExpensesModal from "~/components/OperationExpensesModal";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async () => {};
@@ -60,30 +71,42 @@ export const loader = async ({ params }: { params: Params<string> }) => {
 
 const ExpensesList: FC = () => {
   const { cash, card, params } = useLoaderData() as LoaderData<typeof loader>;
-  // const submit = useSubmit();
+  const revalidator = useRevalidator();
 
-  // const onExpensesSave = (
-  //   date: string,
-  //   type: ExpensesCash,
-  //   purpose: string,
-  //   amount: number
-  // ) => {
-  //   submit(
-  //     {
-  //       content: JSON.stringify({
-  //         date,
-  //         type: [type],
-  //         purpose,
-  //         amount,
-  //       } satisfies ExpensesCashBaseType),
-  //     },
-  //     {
-  //       method: "POST",
-  //     }
-  //   );
+  const [edit, setEdit] = useState<ExpensesCashType | undefined>();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  //   onCloseNewExpensesModal();
-  // };
+  const onExpensesUpdate = async (
+    date: string,
+    type: ExpensesCash,
+    purpose: string,
+    amount: number
+  ) => {
+    if (!edit) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await updateExpensesCash(edit.id, {
+        date,
+        type: [type],
+        purpose,
+        amount,
+      } satisfies ExpensesCashBaseType);
+
+      revalidator.revalidate();
+      setEdit(undefined);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsSubmitting(false);
+    }
+
+    setIsSubmitting(false);
+    setEdit(undefined);
+  };
 
   const total = [
     ...cash.map(({ type, amount }) =>
@@ -127,6 +150,7 @@ const ExpensesList: FC = () => {
                       <Flex
                         as="button"
                         aria-label={`「${item.purpose}」の詳細`}
+                        onClick={() => setEdit(item)}
                         alignItems="stretch"
                         justifyContent="center"
                         flexDir="column"
@@ -199,6 +223,18 @@ const ExpensesList: FC = () => {
           </TabPanels>
         </Tabs>
       </VStack>
+      {edit && (
+        <OperationExpensesModal
+          variant="edit"
+          isOpen={!!edit}
+          onClose={() => setEdit(undefined)}
+          isSubmitting={isSubmitting}
+          onSave={(date, type, purpose, amount) =>
+            onExpensesUpdate(date, type, purpose, amount)
+          }
+          expenses={edit}
+        />
+      )}
     </>
   );
 };

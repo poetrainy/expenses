@@ -12,7 +12,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import ModalBase from "~/components/ModalBase";
-import { ExpensesCash } from "~/types/Expenses";
+import { ExpensesCash, ExpensesCashType } from "~/types/Expenses";
 
 const NUMBERS = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
 const ARITHMETICS: string[] = ["/", "*", "-", "+"];
@@ -35,6 +35,18 @@ export const Arithmetic = () => (
   </VStack>
 );
 
+type ModalVariant = "new" | "edit";
+
+const ACTION_MAP: Record<ModalVariant, string> = {
+  new: "登録",
+  edit: "編集",
+};
+
+const EXPENSES_AND_INCOME_MAP: Record<ExpensesCash, string> = {
+  expenses: "支出",
+  income: "収入",
+};
+
 type Props = {
   isOpen: boolean;
   isSubmitting: boolean;
@@ -45,18 +57,33 @@ type Props = {
     purpose: string,
     amount: number
   ) => void;
-};
+} & (
+  | {
+      variant: "new";
+      expenses?: undefined;
+    }
+  | {
+      variant: "edit";
+      expenses: ExpensesCashType;
+    }
+);
 
-const NewExpensesModal: FC<Props> = ({
+const OperationExpensesModal: FC<Props> = ({
+  variant,
+  expenses,
   isOpen,
   isSubmitting,
   onClose,
   onSave,
 }) => {
-  const [date, setDate] = useState<string>("");
-  const [type, setType] = useState<ExpensesCash>("expenses");
-  const [purpose, setPurpose] = useState<string>("");
-  const [result, setResult] = useState<string>("");
+  const [date, setDate] = useState<string>(expenses?.date ?? "");
+  const [type, setType] = useState<ExpensesCash>(
+    expenses?.type[0] ?? "expenses"
+  );
+  const [purpose, setPurpose] = useState<string>(expenses?.purpose ?? "");
+  const [result, setResult] = useState<string>(
+    expenses?.amount ? String(expenses?.amount) : ""
+  );
   const [prevIsSubmitting, setPrevIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
@@ -74,7 +101,7 @@ const NewExpensesModal: FC<Props> = ({
       isOpen={isOpen}
       onClose={onClose}
       size={["full", "3xl"]}
-      heading="登録する"
+      heading={`収支を${ACTION_MAP[variant]}する`}
     >
       <Tabs isFitted defaultIndex={type === "expenses" ? 0 : 1}>
         <TabList>
@@ -186,13 +213,13 @@ const NewExpensesModal: FC<Props> = ({
           setPrevIsSubmitting(true);
         }}
         isLoading={isSubmitting}
-        loadingText={`${type === "expenses" ? "支出" : "収入"}を登録する`}
+        loadingText={`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
         isDisabled={!date.length || !purpose.length || !result.length}
       >
-        {`${type === "expenses" ? "支出" : "収入"}を登録する`}
+        {`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
       </Button>
     </ModalBase>
   );
 };
 
-export default NewExpensesModal;
+export default OperationExpensesModal;
