@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useRevalidator } from "react-router-dom";
 import { Center, Heading, IconButton, useDisclosure } from "@chakra-ui/react";
 import { EditIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { saveExpensesCash } from "~/api/expenses";
@@ -13,6 +13,7 @@ type Props = {
 
 const Header: FC<Props> = ({ archives }) => {
   const { state } = useLocation();
+  const revalidator = useRevalidator();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const {
@@ -53,6 +54,7 @@ const Header: FC<Props> = ({ archives }) => {
         amount,
       } satisfies ExpensesCashBaseType);
 
+      revalidator.revalidate();
       onCloseNewExpensesModal();
     } catch (e) {
       console.error(e);
