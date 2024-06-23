@@ -1,5 +1,5 @@
 import { FC } from "react";
-import OriginalModal from "~/components/OriginalModal";
+import ModalBase from "~/components/ModalBase";
 import { ExpensesCashType } from "~/types/Expenses";
 
 type Props = {
@@ -14,7 +14,7 @@ const ExpensesDetailModal: FC<Props> = ({ isOpen, onClose, expenses }) => {
   }
 
   return (
-    <OriginalModal
+    <ModalBase
       isOpen={isOpen}
       onClose={onClose}
       isCentered
@@ -22,7 +22,7 @@ const ExpensesDetailModal: FC<Props> = ({ isOpen, onClose, expenses }) => {
       heading="詳細"
     >
       <></>
-    </OriginalModal>
+    </ModalBase>
   );
 };
 

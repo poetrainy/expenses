@@ -14,17 +14,13 @@ type Props = ModalProps & {
   heading: string;
 };
 
-const OriginalModal: FC<Props> = ({ heading,...props }) => (
+const ModalBase: FC<Props> = ({ heading, ...props }) => (
   <Modal isCentered {...props}>
     <ModalOverlay />
     <ModalContent>
-      <ModalHeader
-        fontSize="18px"
-        textAlign="center"
-      >
+      <ModalHeader fontSize="18px" textAlign="center">
         <Text as="span">{heading}</Text>
-        <ModalCloseButton
-        />
+        <ModalCloseButton />
       </ModalHeader>
       <ModalBody
         display="flex"
@@ -33,7 +29,7 @@ const OriginalModal: FC<Props> = ({ heading,...props }) => (
         w="100%"
         maxW="600px"
         m="auto"
-        p="0 16px 16px"
+        p="0 16px 32px"
         pos="relative"
       >
         {props.children}
@@ -42,4 +38,4 @@ const OriginalModal: FC<Props> = ({ heading,...props }) => (
   </Modal>
 );
 
-export default OriginalModal;
+export default ModalBase;

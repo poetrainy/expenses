@@ -11,7 +11,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import OriginalModal from "~/components/OriginalModal";
+import ModalBase from "~/components/ModalBase";
 import { ExpensesCash } from "~/types/Expenses";
 
 const NUMBERS = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
@@ -53,7 +53,7 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
   const [result, setResult] = useState<string>("");
 
   return (
-    <OriginalModal
+    <ModalBase
       isOpen={isOpen}
       onClose={onClose}
       size={["full", "3xl"]}
@@ -171,7 +171,7 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
       >
         保存する
       </Button>
-    </OriginalModal>
+    </ModalBase>
   );
 };
 
