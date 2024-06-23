@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   Button,
   Center,
@@ -37,6 +37,7 @@ export const Arithmetic = () => (
 
 type Props = {
   isOpen: boolean;
+  isSubmitting: boolean;
   onClose: () => void;
   onSave: (
     date: string,
@@ -46,11 +47,27 @@ type Props = {
   ) => void;
 };
 
-const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
+const NewExpensesModal: FC<Props> = ({
+  isOpen,
+  isSubmitting,
+  onClose,
+  onSave,
+}) => {
   const [date, setDate] = useState<string>("");
   const [type, setType] = useState<ExpensesCash>("expenses");
   const [purpose, setPurpose] = useState<string>("");
   const [result, setResult] = useState<string>("");
+  const [prevIsSubmitting, setPrevIsSubmitting] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (prevIsSubmitting && !isSubmitting) {
+      setPrevIsSubmitting(false);
+      setDate("");
+      setType("expenses");
+      setPurpose("");
+      setResult("");
+    }
+  }, [isSubmitting, prevIsSubmitting]);
 
   return (
     <ModalBase
@@ -114,7 +131,11 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
             </Text>
             <Text
               as="span"
-              color={type === "expenses" ? "gray.800" : "green.400"}
+              sx={{
+                ...(type === "income" && {
+                  color: "green.400",
+                }),
+              }}
             >
               {Number(result.length ? result : "0").toLocaleString()}
             </Text>
@@ -162,14 +183,13 @@ const NewExpensesModal: FC<Props> = ({ isOpen, onClose, onSave }) => {
         type="button"
         onClick={() => {
           onSave(`${date}`, type, purpose, Number(result));
-          setDate("");
-          setType("expenses");
-          setPurpose("");
-          setResult("");
+          setPrevIsSubmitting(true);
         }}
+        isLoading={isSubmitting}
+        loadingText={`${type === "expenses" ? "支出" : "収入"}を登録する`}
         isDisabled={!date.length || !purpose.length || !result.length}
       >
-        保存する
+        {`${type === "expenses" ? "支出" : "収入"}を登録する`}
       </Button>
     </ModalBase>
   );

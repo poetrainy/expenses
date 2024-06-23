@@ -12,7 +12,7 @@ type Props = {
 const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => {
   const MENU_CONTENTS = [
     {
-      label: "すべての記録",
+      heading: "すべての記録",
       contents: archives.map((items) => {
         return {
           label: `${items[0]}年${items[1]}月`,
@@ -21,11 +21,15 @@ const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => {
       }),
     },
     {
-      label: "設定",
+      heading: "設定",
       contents: [
         {
           label: "プリセット",
           path: "presets",
+        },
+        {
+          label: "収支の連続登録",
+          path: "",
         },
       ],
     },
@@ -34,18 +38,36 @@ const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => {
   return (
     <DrawerBase heading="Menu" isOpen={isOpen} onClose={onClose}>
       <VStack gap="24px" alignItems="stretch">
-        {MENU_CONTENTS.map(({ label, contents }) => (
-          <VStack alignItems="stretch" gap="16px">
-            <Text as="p" key={label} color="gray.600" fontWeight="bold">
-              {label}
+        {MENU_CONTENTS.map(({ heading, contents }) => (
+          <VStack alignItems="stretch">
+            <Text
+              as="p"
+              key={heading}
+              color="gray.600"
+              p="0 16px"
+              fontSize="13px"
+              fontWeight="bold"
+              lineHeight="13px"
+            >
+              {heading}
             </Text>
-            <VStack as="ul" alignItems="stretch" gap="8px" p={0}>
+            <VStack as="ul" alignItems="stretch" gap={0} p={0}>
               {contents.map((item) => (
-                <Box as="li" key={item.label}>
+                <Box as="li" key={item.label} w="100%">
                   <ChakraUILink
                     as={RouterLink}
                     to={item.path}
                     state={{ isOpenMenuDrawer: false }}
+                    display="flex"
+                    alignItems="center"
+                    w="100%"
+                    h="48px"
+                    bg="white"
+                    p="0 16px"
+                    transform="background 0.2s"
+                    _hover={{ textDecor: "none", bg: "gray.100" }}
+                    _active={{ bg: "gray.200" }}
+                    _focusVisible={{ bg: "gray.300" }}
                   >
                     {item.label}
                   </ChakraUILink>

@@ -1,10 +1,7 @@
 import { FC } from "react";
 import {
-  ActionFunctionArgs,
   Params,
-  redirect,
   useLoaderData,
-  useSubmit,
 } from "react-router-dom";
 import {
   Box,
@@ -16,37 +13,19 @@ import {
   Tabs,
   Text,
   VStack,
-  useDisclosure,
 } from "@chakra-ui/react";
 import {
   getExpensesAllCard,
   getExpensesAllCash,
   getExpensesFilteredCard,
   getExpensesFilteredCash,
-  saveExpensesCash,
 } from "~/api/expenses";
 import { EXPENSES_CARD_PROVIDERS } from "~/constants/expenses";
-import FloatingButton from "~/components/FloatingButton";
-import NewExpensesModal from "~/components/NewExpensesModal";
 import { formatDate } from "~/libs/format";
 import { LoaderData } from "~/types";
-import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const formData = await request.formData();
-  const content = formData.get("content") as string;
-
-  try {
-    await saveExpensesCash(JSON.parse(content) as ExpensesCashBaseType);
-
-    return redirect("/2024/6");
-  } catch (e) {
-    console.error(e);
-
-    return null;
-  }
-};
+export const action = async () => {};
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const loader = async ({ params }: { params: Params<string> }) => {
@@ -84,36 +63,30 @@ export const loader = async ({ params }: { params: Params<string> }) => {
 
 const ExpensesList: FC = () => {
   const { cash, card, params } = useLoaderData() as LoaderData<typeof loader>;
-  const submit = useSubmit();
+  // const submit = useSubmit();
 
-  const {
-    isOpen: isOpenNewExpensesModal,
-    onOpen: onOpenNewExpensesModal,
-    onClose: onCloseNewExpensesModal,
-  } = useDisclosure();
+  // const onExpensesSave = (
+  //   date: string,
+  //   type: ExpensesCash,
+  //   purpose: string,
+  //   amount: number
+  // ) => {
+  //   submit(
+  //     {
+  //       content: JSON.stringify({
+  //         date,
+  //         type: [type],
+  //         purpose,
+  //         amount,
+  //       } satisfies ExpensesCashBaseType),
+  //     },
+  //     {
+  //       method: "POST",
+  //     }
+  //   );
 
-  const onExpensesSave = (
-    date: string,
-    type: ExpensesCash,
-    purpose: string,
-    amount: number
-  ) => {
-    submit(
-      {
-        content: JSON.stringify({
-          date,
-          type: [type],
-          purpose,
-          amount,
-        } satisfies ExpensesCashBaseType),
-      },
-      {
-        method: "POST",
-      }
-    );
-
-    onCloseNewExpensesModal();
-  };
+  //   onCloseNewExpensesModal();
+  // };
 
   const total = [
     ...cash.map(({ type, amount }) =>
@@ -192,7 +165,6 @@ const ExpensesList: FC = () => {
               ) : (
                 <Text>データが登録されていません。</Text>
               )}
-              <FloatingButton onClick={() => onOpenNewExpensesModal()} />
             </TabPanel>
             <TabPanel p={0}>
               <VStack alignItems="stretch" gap="20px">
@@ -216,16 +188,6 @@ const ExpensesList: FC = () => {
           </TabPanels>
         </Tabs>
       </VStack>
-      <NewExpensesModal
-        isOpen={isOpenNewExpensesModal}
-        onClose={onCloseNewExpensesModal}
-        onSave={(
-          date: string,
-          type: ExpensesCash,
-          purpose: string,
-          amount: number
-        ) => onExpensesSave(date, type, purpose, amount)}
-      />
     </>
   );
 };

@@ -18,13 +18,13 @@ const DrawerBase: FC<Props> = ({ heading, ...props }) => (
     <DrawerOverlay />
     <DrawerContent>
       <DrawerCloseButton />
-      <DrawerHeader p="16px">{heading}</DrawerHeader>
+      <DrawerHeader p="16px" fontSize="18px">{heading}</DrawerHeader>
       <DrawerBody
         display="flex"
         flexDir="column"
         alignItems="stretch"
         gap="8px"
-        p="0 16px 56px"
+        p="24px 0 56px"
       >
         {props.children}
       </DrawerBody>
