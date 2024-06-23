@@ -67,7 +67,7 @@ const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => {
                     transform="background 0.2s"
                     _hover={{ textDecor: "none", bg: "gray.100" }}
                     _active={{ bg: "gray.200" }}
-                    _focusVisible={{ bg: "gray.300" }}
+                    _focusVisible={{ bg: "gray.200" }}
                   >
                     {item.label}
                   </ChakraUILink>

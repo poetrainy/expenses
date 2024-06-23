@@ -1,9 +1,5 @@
 import { FC, useState } from "react";
-import {
-  Params,
-  useLoaderData,
-  useRevalidator,
-} from "react-router-dom";
+import { Params, useLoaderData, useRevalidator } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -16,6 +12,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import {
+  deleteExpensesCash,
   getExpensesAllCard,
   getExpensesAllCash,
   getExpensesFilteredCard,
@@ -75,6 +72,7 @@ const ExpensesList: FC = () => {
 
   const [edit, setEdit] = useState<ExpensesCashType | undefined>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const onExpensesUpdate = async (
     date: string,
@@ -105,6 +103,28 @@ const ExpensesList: FC = () => {
     }
 
     setIsSubmitting(false);
+    setEdit(undefined);
+  };
+
+  const onExpensesDelete = async () => {
+    if (!edit) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      await deleteExpensesCash(edit.id);
+
+      revalidator.revalidate();
+      setEdit(undefined);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsDeleting(false);
+    }
+
+    setIsDeleting(false);
     setEdit(undefined);
   };
 
@@ -162,7 +182,7 @@ const ExpensesList: FC = () => {
                         transition="background 0.2s"
                         _hover={{ textDecor: "none", bg: "gray.100" }}
                         _active={{ bg: "gray.200" }}
-                        _focusVisible={{ bg: "gray.300" }}
+                        _focusVisible={{ bg: "gray.200" }}
                       >
                         <Text
                           as="span"
@@ -229,9 +249,11 @@ const ExpensesList: FC = () => {
           isOpen={!!edit}
           onClose={() => setEdit(undefined)}
           isSubmitting={isSubmitting}
+          isDeleting={isDeleting}
           onSave={(date, type, purpose, amount) =>
             onExpensesUpdate(date, type, purpose, amount)
           }
+          onDelete={() => onExpensesDelete()}
           expenses={edit}
         />
       )}

@@ -61,10 +61,14 @@ type Props = {
   | {
       variant: "new";
       expenses?: undefined;
+      onDelete?: undefined;
+      isDeleting?: undefined;
     }
   | {
       variant: "edit";
       expenses: ExpensesCashType;
+      onDelete: () => void;
+      isDeleting: boolean;
     }
 );
 
@@ -73,8 +77,10 @@ const OperationExpensesModal: FC<Props> = ({
   expenses,
   isOpen,
   isSubmitting,
+  isDeleting,
   onClose,
   onSave,
+  onDelete,
 }) => {
   const [date, setDate] = useState<string>(expenses?.date ?? "");
   const [type, setType] = useState<ExpensesCash>(
@@ -85,16 +91,20 @@ const OperationExpensesModal: FC<Props> = ({
     expenses?.amount ? String(expenses?.amount) : ""
   );
   const [prevIsSubmitting, setPrevIsSubmitting] = useState<boolean>(false);
+  const [prevIsDeleting, setPrevIsDeleting] = useState<boolean>(false);
 
   useEffect(() => {
-    if (prevIsSubmitting && !isSubmitting) {
+    if (
+      (prevIsSubmitting && !isSubmitting) ||
+      (prevIsDeleting && !isDeleting)
+    ) {
       setPrevIsSubmitting(false);
       setDate("");
       setType("expenses");
       setPurpose("");
       setResult("");
     }
-  }, [isSubmitting, prevIsSubmitting]);
+  }, [isDeleting, isSubmitting, prevIsDeleting, prevIsSubmitting]);
 
   return (
     <ModalBase
@@ -205,19 +215,47 @@ const OperationExpensesModal: FC<Props> = ({
         </Flex>
       </VStack>
       <Spacer />
-      <Button
-        w="100%"
-        type="button"
-        onClick={() => {
-          onSave(`${date}`, type, purpose, Number(result));
-          setPrevIsSubmitting(true);
-        }}
-        isLoading={isSubmitting}
-        loadingText={`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
-        isDisabled={!date.length || !purpose.length || !result.length}
-      >
-        {`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
-      </Button>
+      <VStack gap="8px" p={0}>
+        <Button
+          w="100%"
+          type="button"
+          onClick={() => {
+            onSave?.(`${date}`, type, purpose, Number(result));
+            setPrevIsSubmitting(true);
+          }}
+          isLoading={isSubmitting}
+          loadingText={`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
+          isDisabled={!date.length || !purpose.length || !result.length || !!isDeleting}
+        >
+          {`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
+        </Button>
+        {variant === "edit" && (
+          <Button
+            w="100%"
+            type="button"
+            variant="ghost"
+            colorScheme="red"
+            onClick={() => {
+              onDelete?.();
+              setPrevIsDeleting(true);
+            }}
+            isDisabled={isSubmitting}
+            isLoading={isDeleting}
+            loadingText="この記録を削除する"
+            h="32px"
+            color="red.500"
+            fontSize="14px"
+            fontWeight="normal"
+            bg="transparent"
+            transition="color 0.2s"
+            _hover={{ color: "red.600", bg: "transparent" }}
+            _active={{ color: "red.700", bg: "transparent" }}
+            _focus={{ color: "red.700", bg: "transparent" }}
+          >
+            この記録を削除する
+          </Button>
+        )}
+      </VStack>
     </ModalBase>
   );
 };
