@@ -82,7 +82,7 @@ const Header: FC<Props> = ({ archives }) => {
           pos="absolute"
           inset="0 auto 0 16px"
         />
-        <Heading as="h1" fontSize="16px">
+        <Heading as="h1" color="gray.700" fontSize="16px">
           poetrainy-expenses
         </Heading>
         <IconButton

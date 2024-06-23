@@ -1,8 +1,5 @@
 import { FC } from "react";
-import {
-  Params,
-  useLoaderData,
-} from "react-router-dom";
+import { Params, useLoaderData } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -119,25 +116,39 @@ const ExpensesList: FC = () => {
           <TabPanels mt="16px">
             <TabPanel p={0}>
               {cash.length ? (
-                <VStack as="ul" alignItems="stretch" gap="16px">
+                <VStack
+                  as="ul"
+                  alignItems="stretch"
+                  gap={0}
+                  m={["0 -16px", "0"]}
+                >
                   {cash.map((item) => (
                     <Box key={item.id} as="li" w="100%">
                       <Flex
                         as="button"
-                        alignItems="center"
-                        justifyContent="space-between"
+                        aria-label={`「${item.purpose}」の詳細`}
+                        alignItems="stretch"
+                        justifyContent="center"
+                        flexDir="column"
+                        gap="2px"
                         w="100%"
-                        h="44px"
+                        h="60px"
+                        bg="white"
+                        p="0 16px"
+                        transition="background 0.2s"
+                        _hover={{ textDecor: "none", bg: "gray.100" }}
+                        _active={{ bg: "gray.200" }}
+                        _focusVisible={{ bg: "gray.300" }}
                       >
-                        <Flex flexDir="column" alignItems="left">
-                          <Text
-                            as="span"
-                            color="gray.500"
-                            fontSize="12px"
-                            textAlign="left"
-                          >
-                            {formatDate(item.date)}
-                          </Text>
+                        <Text
+                          as="span"
+                          color="gray.500"
+                          fontSize="12px"
+                          textAlign="left"
+                        >
+                          {formatDate(item.date)}
+                        </Text>
+                        <Flex justifyContent="space-between">
                           <Text
                             color="gray.600"
                             fontSize="14px"
@@ -146,18 +157,18 @@ const ExpensesList: FC = () => {
                           >
                             {item.purpose}
                           </Text>
+                          <Text
+                            color={
+                              item.type.includes("income")
+                                ? "green.400"
+                                : "gray.700"
+                            }
+                            fontSize="14px"
+                            fontWeight="bold"
+                          >
+                            {`${item.type.includes("income") ? "+" : ""} ¥${item.amount.toLocaleString()}`}
+                          </Text>
                         </Flex>
-                        <Text
-                          color={
-                            item.type.includes("income")
-                              ? "green.400"
-                              : "gray.700"
-                          }
-                          fontSize="14px"
-                          fontWeight="bold"
-                        >
-                          {`${item.type.includes("income") ? "+" : ""} ¥${item.amount.toLocaleString()}`}
-                        </Text>
                       </Flex>
                     </Box>
                   ))}
