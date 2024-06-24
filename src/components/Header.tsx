@@ -70,7 +70,7 @@ const Header: FC<Props> = ({ archives }) => {
       <Center
         w="100%"
         maxW="600px"
-        h="64px"
+        h="56px"
         bg="white"
         m="auto"
         pos="fixed"
@@ -85,7 +85,7 @@ const Header: FC<Props> = ({ archives }) => {
         {isExpensesPage && (
           <>
             <IconButton
-              icon={<HamburgerIcon />}
+              icon={<HamburgerIcon boxSize="20px" />}
               variant="ghost"
               aria-label="メニューを開く"
               onClick={() => onOpenMenuDrawer()}
@@ -94,7 +94,7 @@ const Header: FC<Props> = ({ archives }) => {
               inset="0 auto 0 16px"
             />
             <IconButton
-              icon={<EditIcon />}
+              icon={<EditIcon boxSize="20px" />}
               variant="ghost"
               aria-label="収支を登録する"
               onClick={() => onOpenOperationExpensesModal()}
