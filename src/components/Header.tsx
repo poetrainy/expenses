@@ -12,8 +12,9 @@ type Props = {
 };
 
 const Header: FC<Props> = ({ archives }) => {
-  const { state } = useLocation();
+  const location = useLocation();
   const revalidator = useRevalidator();
+  const isExpensesPage = location.pathname.startsWith("/expenses");
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -30,14 +31,14 @@ const Header: FC<Props> = ({ archives }) => {
   } = useDisclosure();
 
   useEffect(() => {
-    if (!state) {
+    if (!location.state) {
       return;
     }
 
-    if (state.isOpenMenuDrawer === false) {
+    if (location.state.isOpenMenuDrawer === false) {
       onCloseMenuDrawer();
     }
-  }, [onCloseMenuDrawer, state]);
+  }, [onCloseMenuDrawer, location]);
 
   const onExpensesSave = async (
     date: string,
@@ -75,43 +76,53 @@ const Header: FC<Props> = ({ archives }) => {
         pos="fixed"
         inset="0 0 auto 0"
         zIndex={10}
+        borderBottom="1px solid"
+        borderBottomColor="gray.100"
       >
-        <IconButton
-          icon={<HamburgerIcon />}
-          variant="ghost"
-          aria-label="メニューを開く"
-          onClick={() => onOpenMenuDrawer()}
-          m="auto"
-          pos="absolute"
-          inset="0 auto 0 16px"
-        />
         <Heading as="h1" color="gray.700" fontSize="16px">
           poetrainy-expenses
         </Heading>
-        <IconButton
-          icon={<EditIcon />}
-          variant="ghost"
-          aria-label="収支を登録する"
-          onClick={() => onOpenOperationExpensesModal()}
-          m="auto"
-          pos="absolute"
-          inset="0 16px 0 auto"
-        />
+        {isExpensesPage && (
+          <>
+            <IconButton
+              icon={<HamburgerIcon />}
+              variant="ghost"
+              aria-label="メニューを開く"
+              onClick={() => onOpenMenuDrawer()}
+              m="auto"
+              pos="absolute"
+              inset="0 auto 0 16px"
+            />
+            <IconButton
+              icon={<EditIcon />}
+              variant="ghost"
+              aria-label="収支を登録する"
+              onClick={() => onOpenOperationExpensesModal()}
+              m="auto"
+              pos="absolute"
+              inset="0 16px 0 auto"
+            />
+          </>
+        )}
       </Center>
-      <MenuDrawer
-        isOpen={isOpenMenuDrawer}
-        onClose={onCloseMenuDrawer}
-        archives={archives}
-      />
-      <OperationExpensesModal
-        variant="new"
-        isOpen={isOpenOperationExpensesModal}
-        onClose={onCloseOperationExpensesModal}
-        isSubmitting={isSubmitting}
-        onSave={(date, type, purpose, amount) =>
-          onExpensesSave(date, type, purpose, amount)
-        }
-      />
+      {isExpensesPage && (
+        <>
+          <MenuDrawer
+            isOpen={isOpenMenuDrawer}
+            onClose={onCloseMenuDrawer}
+            archives={archives}
+          />
+          <OperationExpensesModal
+            variant="new"
+            isOpen={isOpenOperationExpensesModal}
+            onClose={onCloseOperationExpensesModal}
+            isSubmitting={isSubmitting}
+            onSave={(date, type, purpose, amount) =>
+              onExpensesSave(date, type, purpose, amount)
+            }
+          />
+        </>
+      )}
     </>
   );
 };

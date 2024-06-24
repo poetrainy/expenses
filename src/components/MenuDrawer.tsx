@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { Box, Link as ChakraUILink, Text, VStack } from "@chakra-ui/react";
+import { Box, Link as ChakraUILink, VStack } from "@chakra-ui/react";
 import DrawerBase from "~/components/DrawerBase";
 
 type Props = {
@@ -16,22 +16,9 @@ const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => {
       contents: archives.map((items) => {
         return {
           label: `${items[0]}年${items[1]}月`,
-          path: `/${items.join("/")}`,
+          path: `/expenses/${items.join("/")}`,
         };
       }),
-    },
-    {
-      heading: "設定",
-      contents: [
-        {
-          label: "プリセット",
-          path: "presets",
-        },
-        {
-          label: "収支の連続登録",
-          path: "",
-        },
-      ],
     },
   ];
 
@@ -40,17 +27,6 @@ const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => {
       <VStack gap="24px" alignItems="stretch">
         {MENU_CONTENTS.map(({ heading, contents }) => (
           <VStack key={heading} alignItems="stretch">
-            <Text
-              as="p"
-              key={heading}
-              color="gray.600"
-              p="0 16px"
-              fontSize="13px"
-              fontWeight="bold"
-              lineHeight="13px"
-            >
-              {heading}
-            </Text>
             <VStack as="ul" alignItems="stretch" gap={0} p={0}>
               {contents.map((item) => (
                 <Box as="li" key={item.label} w="100%">

@@ -137,7 +137,7 @@ const ExpensesList: FC = () => {
 
   return (
     <>
-      <VStack alignItems="stretch" gap="32px">
+      <VStack alignItems="stretch" gap="24px">
         <VStack alignItems="center" gap="8px">
           <Text
             color="gray.500"

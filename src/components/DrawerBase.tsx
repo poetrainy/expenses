@@ -24,7 +24,7 @@ const DrawerBase: FC<Props> = ({ heading, ...props }) => (
         flexDir="column"
         alignItems="stretch"
         gap="8px"
-        p="24px 0 56px"
+        p={0}
       >
         {props.children}
       </DrawerBody>
