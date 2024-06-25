@@ -4,6 +4,7 @@ const styles = {
   global: {
     body: {
       color: "gray.800",
+      bg: "gray.50",
       fontSize: "14px",
       fontFamily: "body",
       a: {

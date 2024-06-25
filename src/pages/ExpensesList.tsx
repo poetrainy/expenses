@@ -177,7 +177,7 @@ const ExpensesList: FC = () => {
                         gap="2px"
                         w="100%"
                         h="60px"
-                        bg="white"
+                        bg="transparent"
                         p="0 16px"
                         transition="background 0.2s"
                         _hover={{ textDecor: "none", bg: "gray.100" }}
