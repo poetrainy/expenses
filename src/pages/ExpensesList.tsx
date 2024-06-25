@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import { Params, useLoaderData, useRevalidator } from "react-router-dom";
 import {
   Box,
@@ -28,6 +28,22 @@ import {
   ExpensesCashType,
 } from "~/types/Expenses";
 import OperationExpensesModal from "~/components/OperationExpensesModal";
+
+const ListWrapper = ({ children }: { children: ReactNode }) => (
+  <VStack
+    as="ul"
+    alignItems="stretch"
+    gap={0}
+    bg="white"
+    m="0 -16px"
+    p="4px 0"
+    borderY="1px solid"
+    borderTopColor="gray.100"
+    borderBottomColor="gray.100"
+  >
+    {children}
+  </VStack>
+);
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async () => {};
@@ -168,14 +184,7 @@ const ExpensesList: FC = () => {
           <TabPanels>
             <TabPanel p={0}>
               {cash.length ? (
-                <VStack
-                  as="ul"
-                  alignItems="stretch"
-                  gap={0}
-                  bg="white"
-                  m="0 -16px"
-                  p="4px 0"
-                >
+                <ListWrapper>
                   {cash.map((item) => (
                     <Box key={item.id} as="li" w="100%">
                       <Flex
@@ -227,20 +236,13 @@ const ExpensesList: FC = () => {
                       </Flex>
                     </Box>
                   ))}
-                </VStack>
+                </ListWrapper>
               ) : (
                 <Text>データが登録されていません。</Text>
               )}
             </TabPanel>
             <TabPanel p={0}>
-              <VStack
-                as="ul"
-                alignItems="stretch"
-                gap={0}
-                bg="white"
-                m="0 -16px"
-                p="4px 0"
-              >
+              <ListWrapper>
                 {EXPENSES_CARD_PROVIDERS.map((provider) => (
                   <Flex
                     key={provider}
@@ -258,7 +260,7 @@ const ExpensesList: FC = () => {
                     </Text>
                   </Flex>
                 ))}
-              </VStack>
+              </ListWrapper>
             </TabPanel>
           </TabPanels>
         </Tabs>
