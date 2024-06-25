@@ -36,7 +36,7 @@ const ListWrapper = ({ children }: { children: ReactNode }) => (
     gap={0}
     bg="white"
     m="0 -16px"
-    p="4px 0"
+    p="8px 0"
     borderY="1px solid"
     borderTopColor="gray.100"
     borderBottomColor="gray.100"
