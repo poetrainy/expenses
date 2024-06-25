@@ -21,3 +21,19 @@ export type ExpensesCardBaseType = {
 export type ExpensesCashType = MicroCMSType & ExpensesCashBaseType;
 
 export type ExpensesCardType = MicroCMSType & ExpensesCardBaseType;
+
+export type SettingBaseType = MicroCMSType & {
+  type: ("presets" | "targetAmount")[];
+};
+
+export type SettingPresetsType = SettingBaseType & {
+  presets: {
+    fieldId: "presets";
+    purpose: string;
+    amount: number;
+  };
+};
+
+export type SettingTargetAmountType = MicroCMSType & {
+  targetAmount: number;
+};

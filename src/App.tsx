@@ -11,7 +11,7 @@ import ExpensesList, {
 } from "~/pages/ExpensesList";
 import Root, { loader as loaderRoot } from "~/pages/Root";
 import { getPath } from "~/libs/getPath";
-// import Statistics, { loader as loaderStatistics } from "~/pages/Statistics";
+import Statistics, { loader as loaderStatistics } from "~/pages/Statistics";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -33,11 +33,11 @@ const App = () => {
           action={actionExpensesList}
           loader={loaderExpensesList}
         />
-        {/* <Route
+        <Route
           path="statistics"
           element={<Statistics />}
           loader={loaderStatistics}
-        /> */}
+        />
       </Route>
     )
   );
