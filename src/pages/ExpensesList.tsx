@@ -152,18 +152,29 @@ const ExpensesList: FC = () => {
           >{`¥${total.toLocaleString()}`}</Text>
         </VStack>
         <Tabs isFitted variant="enclosed">
-          <TabList>
+          <TabList
+            sx={{
+              ">button[aria-selected=true]": {
+                bg: "white",
+              },
+              ">button[data-selected]": {
+                bg: "white",
+              },
+            }}
+          >
             <Tab fontSize="14px">現金</Tab>
             <Tab fontSize="14px">カード</Tab>
           </TabList>
-          <TabPanels mt="16px">
+          <TabPanels>
             <TabPanel p={0}>
               {cash.length ? (
                 <VStack
                   as="ul"
                   alignItems="stretch"
                   gap={0}
-                  m={["0 -16px", "0"]}
+                  bg="white"
+                  m="0 -16px"
+                  p="4px 0"
                 >
                   {cash.map((item) => (
                     <Box key={item.id} as="li" w="100%">
@@ -222,13 +233,22 @@ const ExpensesList: FC = () => {
               )}
             </TabPanel>
             <TabPanel p={0}>
-              <VStack alignItems="stretch" gap="20px">
+              <VStack
+                as="ul"
+                alignItems="stretch"
+                gap={0}
+                bg="white"
+                m="0 -16px"
+                p="4px 0"
+              >
                 {EXPENSES_CARD_PROVIDERS.map((provider) => (
                   <Flex
                     key={provider}
+                    as="li"
                     alignItems="center"
                     justifyContent="space-between"
-                    h="44px"
+                    h="60px"
+                    p="0 16px"
                   >
                     <Text color="gray.600" fontSize="14px" fontWeight="bold">
                       {provider}
