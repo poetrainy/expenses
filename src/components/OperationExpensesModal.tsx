@@ -111,16 +111,20 @@ const OperationExpensesModal: FC<Props> = ({
       onClose={onClose}
       size={["full", "3xl"]}
       heading={`収支を${ACTION_MAP[variant]}する`}
-      headerLightAction={[
-        {
-          variant: "danger",
-          label: "この記録を削除する",
-          onClick: () => {
-            onDelete?.();
-            setPrevIsDeleting(true);
-          },
-        },
-      ]}
+      headerLightAction={
+        variant === "edit"
+          ? [
+              {
+                variant: "danger",
+                label: "この記録を削除する",
+                onClick: () => {
+                  onDelete?.();
+                  setPrevIsDeleting(true);
+                },
+              },
+            ]
+          : undefined
+      }
       footer={
         <VStack gap="8px" w="100%" maxW="600px" m="auto" p="0 0 16px">
           <Button
@@ -135,7 +139,7 @@ const OperationExpensesModal: FC<Props> = ({
             isDisabled={
               !date.length || !purpose.length || !result.length || !!isDeleting
             }
-            h="48px"
+            h="56px"
           >
             {`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
           </Button>
