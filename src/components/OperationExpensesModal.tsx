@@ -111,6 +111,16 @@ const OperationExpensesModal: FC<Props> = ({
       onClose={onClose}
       size={["full", "3xl"]}
       heading={`収支を${ACTION_MAP[variant]}する`}
+      headerLightAction={[
+        {
+          variant: "danger",
+          label: "この記録を削除する",
+          onClick: () => {
+            onDelete?.();
+            setPrevIsDeleting(true);
+          },
+        },
+      ]}
       footer={
         <VStack gap="8px" w="100%" maxW="600px" m="auto" p="0 0 16px">
           <Button
@@ -125,35 +135,10 @@ const OperationExpensesModal: FC<Props> = ({
             isDisabled={
               !date.length || !purpose.length || !result.length || !!isDeleting
             }
+            h="48px"
           >
             {`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
           </Button>
-          {variant === "edit" && (
-            <Button
-              w="100%"
-              type="button"
-              variant="ghost"
-              colorScheme="red"
-              onClick={() => {
-                onDelete?.();
-                setPrevIsDeleting(true);
-              }}
-              isDisabled={isSubmitting}
-              isLoading={isDeleting}
-              loadingText="この記録を削除する"
-              h="32px"
-              color="red.500"
-              fontSize="14px"
-              fontWeight="normal"
-              bg="transparent"
-              transition="color 0.2s"
-              _hover={{ color: "red.600", bg: "transparent" }}
-              _active={{ color: "red.700", bg: "transparent" }}
-              _focus={{ color: "red.700", bg: "transparent" }}
-            >
-              この記録を削除する
-            </Button>
-          )}
         </VStack>
       }
     >
@@ -203,6 +188,21 @@ const OperationExpensesModal: FC<Props> = ({
             h="48px"
             bg="gray.200"
             fontSize="20px"
+            fontFamily="amount"
+            transition="background 0.2s"
+            sx={{
+              "&:hover": {
+                textDecor: "none",
+                bg: "gray.300",
+                cursor: "pointer",
+              },
+              "&:active": {
+                bg: "gray.400",
+              },
+              "&:focus-visible": {
+                bg: "gray.400",
+              },
+            }}
           >
             Clr
           </Center>
@@ -238,7 +238,22 @@ const OperationExpensesModal: FC<Props> = ({
                 w="calc((100% - 4px * 2) / 3)"
                 h="56px"
                 bg="gray.100"
-                fontSize="20px"
+                fontSize="22px"
+                fontFamily="amount"
+                transition="background 0.2s"
+                sx={{
+                  "&:hover": {
+                    textDecor: "none",
+                    bg: "gray.200",
+                    cursor: "pointer",
+                  },
+                  "&:active": {
+                    bg: "gray.300",
+                  },
+                  "&:focus-visible": {
+                    bg: "gray.300",
+                  },
+                }}
               >
                 {number}
               </Center>
@@ -250,7 +265,22 @@ const OperationExpensesModal: FC<Props> = ({
               w="calc((100% - 4px * 2) / 3)"
               h="56px"
               bg="gray.100"
-              fontSize="20px"
+              fontSize="22px"
+              fontFamily="amount"
+              transition="background 0.2s"
+              sx={{
+                "&:hover": {
+                  textDecor: "none",
+                  bg: "gray.200",
+                  cursor: "pointer",
+                },
+                "&:active": {
+                  bg: "gray.300",
+                },
+                "&:focus-visible": {
+                  bg: "gray.300",
+                },
+              }}
             >
               0
             </Center>
