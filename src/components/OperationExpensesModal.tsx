@@ -4,7 +4,6 @@ import {
   Center,
   Flex,
   Input,
-  Spacer,
   Tab,
   TabList,
   Tabs,
@@ -112,6 +111,51 @@ const OperationExpensesModal: FC<Props> = ({
       onClose={onClose}
       size={["full", "3xl"]}
       heading={`収支を${ACTION_MAP[variant]}する`}
+      footer={
+        <VStack gap="8px" w="100%" maxW="600px" m="auto" p="0 0 16px">
+          <Button
+            w="100%"
+            type="button"
+            onClick={() => {
+              onSave?.(`${date}`, type, purpose, Number(result));
+              setPrevIsSubmitting(true);
+            }}
+            isLoading={isSubmitting}
+            loadingText={`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
+            isDisabled={
+              !date.length || !purpose.length || !result.length || !!isDeleting
+            }
+          >
+            {`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
+          </Button>
+          {variant === "edit" && (
+            <Button
+              w="100%"
+              type="button"
+              variant="ghost"
+              colorScheme="red"
+              onClick={() => {
+                onDelete?.();
+                setPrevIsDeleting(true);
+              }}
+              isDisabled={isSubmitting}
+              isLoading={isDeleting}
+              loadingText="この記録を削除する"
+              h="32px"
+              color="red.500"
+              fontSize="14px"
+              fontWeight="normal"
+              bg="transparent"
+              transition="color 0.2s"
+              _hover={{ color: "red.600", bg: "transparent" }}
+              _active={{ color: "red.700", bg: "transparent" }}
+              _focus={{ color: "red.700", bg: "transparent" }}
+            >
+              この記録を削除する
+            </Button>
+          )}
+        </VStack>
+      }
     >
       <Tabs isFitted defaultIndex={type === "expenses" ? 0 : 1}>
         <TabList>
@@ -162,7 +206,7 @@ const OperationExpensesModal: FC<Props> = ({
           >
             Clr
           </Center>
-          <Text as="span" fontSize="40px">
+          <Text as="span" fontSize="40px" fontFamily="amount">
             <Text as="span" color="gray.500">
               ¥
             </Text>
@@ -213,48 +257,6 @@ const OperationExpensesModal: FC<Props> = ({
           </Flex>
           {/* <Arithmetic /> */}
         </Flex>
-      </VStack>
-      <Spacer />
-      <VStack gap="8px" p={0}>
-        <Button
-          w="100%"
-          type="button"
-          onClick={() => {
-            onSave?.(`${date}`, type, purpose, Number(result));
-            setPrevIsSubmitting(true);
-          }}
-          isLoading={isSubmitting}
-          loadingText={`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
-          isDisabled={!date.length || !purpose.length || !result.length || !!isDeleting}
-        >
-          {`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
-        </Button>
-        {variant === "edit" && (
-          <Button
-            w="100%"
-            type="button"
-            variant="ghost"
-            colorScheme="red"
-            onClick={() => {
-              onDelete?.();
-              setPrevIsDeleting(true);
-            }}
-            isDisabled={isSubmitting}
-            isLoading={isDeleting}
-            loadingText="この記録を削除する"
-            h="32px"
-            color="red.500"
-            fontSize="14px"
-            fontWeight="normal"
-            bg="transparent"
-            transition="color 0.2s"
-            _hover={{ color: "red.600", bg: "transparent" }}
-            _active={{ color: "red.700", bg: "transparent" }}
-            _focus={{ color: "red.700", bg: "transparent" }}
-          >
-            この記録を削除する
-          </Button>
-        )}
       </VStack>
     </ModalBase>
   );

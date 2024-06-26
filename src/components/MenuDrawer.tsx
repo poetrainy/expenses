@@ -38,12 +38,8 @@ const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => {
                     alignItems="center"
                     w="100%"
                     h="48px"
-                    bg="white"
                     p="0 16px"
-                    transform="background 0.2s"
-                    _hover={{ textDecor: "none", bg: "gray.100" }}
-                    _active={{ bg: "gray.200" }}
-                    _focusVisible={{ bg: "gray.200" }}
+                    layerStyle="listItemSingleLine"
                   >
                     {item.label}
                   </ChakraUILink>

@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, useState } from "react";
 import { Params, useLoaderData, useRevalidator } from "react-router-dom";
 import {
   Box,
@@ -28,22 +28,7 @@ import {
   ExpensesCashType,
 } from "~/types/Expenses";
 import OperationExpensesModal from "~/components/OperationExpensesModal";
-
-const ListWrapper = ({ children }: { children: ReactNode }) => (
-  <VStack
-    as="ul"
-    alignItems="stretch"
-    gap={0}
-    bg="white"
-    m="0 -16px"
-    p="8px 0"
-    borderY="1px solid"
-    borderTopColor="gray.100"
-    borderBottomColor="gray.100"
-  >
-    {children}
-  </VStack>
-);
+import ListContainer from "~/components/ListContainer";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async () => {};
@@ -164,6 +149,7 @@ const ExpensesList: FC = () => {
             color="gray.700"
             fontSize="40px"
             fontWeight="bold"
+            fontFamily="amount"
             lineHeight="40px"
           >{`¥${total.toLocaleString()}`}</Text>
         </VStack>
@@ -184,7 +170,7 @@ const ExpensesList: FC = () => {
           <TabPanels>
             <TabPanel p={0}>
               {cash.length ? (
-                <ListWrapper>
+                <ListContainer>
                   {cash.map((item) => (
                     <Box key={item.id} as="li" w="100%">
                       <Flex
@@ -197,12 +183,8 @@ const ExpensesList: FC = () => {
                         gap="2px"
                         w="100%"
                         h="60px"
-                        bg="transparent"
                         p="0 16px"
-                        transition="background 0.2s"
-                        _hover={{ textDecor: "none", bg: "gray.100" }}
-                        _active={{ bg: "gray.200" }}
-                        _focusVisible={{ bg: "gray.200" }}
+                        layerStyle="listItemSingleLine"
                       >
                         <Text
                           as="span"
@@ -212,7 +194,10 @@ const ExpensesList: FC = () => {
                         >
                           {formatDate(item.date)}
                         </Text>
-                        <Flex justifyContent="space-between">
+                        <Flex
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
                           <Text
                             color="gray.600"
                             fontSize="14px"
@@ -227,8 +212,9 @@ const ExpensesList: FC = () => {
                                 ? "green.400"
                                 : "gray.700"
                             }
-                            fontSize="14px"
+                            fontSize="16px"
                             fontWeight="bold"
+                            fontFamily="amount"
                           >
                             {`${item.type.includes("income") ? "+" : ""} ¥${item.amount.toLocaleString()}`}
                           </Text>
@@ -236,31 +222,34 @@ const ExpensesList: FC = () => {
                       </Flex>
                     </Box>
                   ))}
-                </ListWrapper>
+                </ListContainer>
               ) : (
                 <Text>データが登録されていません。</Text>
               )}
             </TabPanel>
             <TabPanel p={0}>
-              <ListWrapper>
+              <ListContainer>
                 {EXPENSES_CARD_PROVIDERS.map((provider) => (
-                  <Flex
-                    key={provider}
-                    as="li"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    h="60px"
-                    p="0 16px"
-                  >
-                    <Text color="gray.600" fontSize="14px" fontWeight="bold">
-                      {provider}
-                    </Text>
-                    <Text color="gray.700" fontSize="14px" fontWeight="bold">
-                      {`${card.find(({ cardProvider }) => cardProvider.includes(provider))?.amount.toLocaleString() ?? "（未登録）"}`}
-                    </Text>
+                  <Flex key={provider} as="li" w="100%">
+                    <Flex
+                      as="button"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      w="100%"
+                      h="60px"
+                      p="0 16px"
+                      layerStyle="listItemSingleLine"
+                    >
+                      <Text color="gray.600" fontSize="14px" fontWeight="bold">
+                        {provider}
+                      </Text>
+                      <Text color="gray.700" fontSize="14px" fontWeight="bold">
+                        {`${card.find(({ cardProvider }) => cardProvider.includes(provider))?.amount.toLocaleString() ?? "（未登録）"}`}
+                      </Text>
+                    </Flex>
                   </Flex>
                 ))}
-              </ListWrapper>
+              </ListContainer>
             </TabPanel>
           </TabPanels>
         </Tabs>

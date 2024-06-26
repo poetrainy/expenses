@@ -58,9 +58,7 @@ const Navigation: FC = () => {
               w="80px"
               color="gray.500"
               p="12px 0 24px"
-              _hover={{ textDecor: "none", bg: "gray.100" }}
-              _active={{ bg: "gray.200" }}
-              _focusVisible={{ bg: "gray.200" }}
+              layerStyle="listItemSingleLine"
             >
               <Icon as={link.icon} boxSize="28px" />
               <Text

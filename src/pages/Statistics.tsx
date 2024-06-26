@@ -151,6 +151,7 @@ const Statistics: FC = () => {
                   rounded="8px"
                   fontSize="26px"
                   fontWeight="bold"
+                  fontFamily="amount"
                   wordBreak="break-word"
                   textAlign="right"
                   lineHeight="30px"
