@@ -111,12 +111,17 @@ const OperationExpensesModal: FC<Props> = ({
       onClose={onClose}
       size={["full", "3xl"]}
       heading={`収支を${ACTION_MAP[variant]}する`}
-      headerLightAction={
+      headerLeftAction={
         variant === "edit"
           ? [
               {
+                variant: "normal",
+                label: "プリセットに登録",
+                onClick: () => console.log("registered"),
+              },
+              {
                 variant: "danger",
-                label: "この記録を削除する",
+                label: "この記録を削除",
                 onClick: () => {
                   onDelete?.();
                   setPrevIsDeleting(true);

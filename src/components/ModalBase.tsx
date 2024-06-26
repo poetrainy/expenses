@@ -15,12 +15,13 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Button,
 } from "@chakra-ui/react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 type Props = ModalProps & {
   heading: string;
-  headerLightAction?: {
+  headerLeftAction?: {
     variant: "normal" | "danger";
     label: string;
     onClick: () => void;
@@ -30,7 +31,7 @@ type Props = ModalProps & {
 
 const ModalBase: FC<Props> = ({
   heading,
-  headerLightAction,
+  headerLeftAction,
   footer,
   ...props
 }) => (
@@ -38,7 +39,7 @@ const ModalBase: FC<Props> = ({
     <ModalOverlay />
     <ModalContent gap="16px" p="0 16px 16px">
       <ModalHeader p="16px 0" fontSize="18px" textAlign="center" pos="relative">
-        {headerLightAction?.length && (
+        {headerLeftAction?.length && (
           <Menu autoSelect={false}>
             <MenuButton
               as={IconButton}
@@ -51,12 +52,20 @@ const ModalBase: FC<Props> = ({
               pos="absolute"
               inset="0 auto 0 0"
             />
-            <MenuList rounded="16px" fontSize="14px" overflow="hidden">
-              {headerLightAction.map(({ variant, label, onClick }) => (
+            <MenuList rounded="16px" overflow="hidden">
+              {headerLeftAction.map(({ variant, label, onClick }) => (
                 <MenuItem
                   key={label}
+                  as={Button}
+                  variant="ghost"
+                  colorScheme={variant === "danger" ? "red" : undefined}
                   onClick={onClick}
-                  {...(variant && { color: "red.500" })}
+                  justifyContent="flex-start"
+                  h="44px"
+                  fontSize="14px"
+                  fontWeight="normal"
+                  rounded="0"
+                  {...(variant === "danger" && { color: "red.500" })}
                 >
                   {label}
                 </MenuItem>
