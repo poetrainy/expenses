@@ -39,7 +39,7 @@ const MenuDrawer: FC<Props> = ({ archives, isOpen, onClose }) => {
                     w="100%"
                     h="48px"
                     p="0 16px"
-                    layerStyle="listItemSingleLine"
+                    layerStyle="buttonBackgroundTransition.100"
                   >
                     {item.label}
                   </ChakraUILink>

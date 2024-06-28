@@ -184,7 +184,7 @@ const ExpensesList: FC = () => {
                         w="100%"
                         h="60px"
                         p="0 16px"
-                        layerStyle="listItemSingleLine"
+                        layerStyle="buttonBackgroundTransition.100"
                       >
                         <Text
                           as="span"
@@ -238,7 +238,7 @@ const ExpensesList: FC = () => {
                       w="100%"
                       h="60px"
                       p="0 16px"
-                      layerStyle="listItemSingleLine"
+                      layerStyle="buttonBackgroundTransition.100"
                     >
                       <Text color="gray.600" fontSize="14px" fontWeight="bold">
                         {provider}

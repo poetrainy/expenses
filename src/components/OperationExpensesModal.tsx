@@ -195,23 +195,10 @@ const OperationExpensesModal: FC<Props> = ({
             onClick={() => setResult("")}
             w="calc(((100% * 0.8 + 2px) - 4px * 3) / 3)"
             h="48px"
-            bg="gray.200"
             fontSize="20px"
             fontFamily="amount"
             transition="background 0.2s"
-            sx={{
-              "&:hover": {
-                textDecor: "none",
-                bg: "gray.300",
-                cursor: "pointer",
-              },
-              "&:active": {
-                bg: "gray.400",
-              },
-              "&:focus-visible": {
-                bg: "gray.400",
-              },
-            }}
+            layerStyle="buttonBackgroundTransition.300"
           >
             Clr
           </Center>
@@ -246,23 +233,9 @@ const OperationExpensesModal: FC<Props> = ({
                 onClick={() => setResult((p) => `${p}${number}`)}
                 w="calc((100% - 4px * 2) / 3)"
                 h="56px"
-                bg="gray.100"
                 fontSize="22px"
                 fontFamily="amount"
-                transition="background 0.2s"
-                sx={{
-                  "&:hover": {
-                    textDecor: "none",
-                    bg: "gray.200",
-                    cursor: "pointer",
-                  },
-                  "&:active": {
-                    bg: "gray.300",
-                  },
-                  "&:focus-visible": {
-                    bg: "gray.300",
-                  },
-                }}
+                layerStyle="buttonBackgroundTransition.200"
               >
                 {number}
               </Center>
@@ -273,23 +246,9 @@ const OperationExpensesModal: FC<Props> = ({
               onClick={() => setResult((p) => (p.length ? `${p}0` : p))}
               w="calc((100% - 4px * 2) / 3)"
               h="56px"
-              bg="gray.100"
               fontSize="22px"
               fontFamily="amount"
-              transition="background 0.2s"
-              sx={{
-                "&:hover": {
-                  textDecor: "none",
-                  bg: "gray.200",
-                  cursor: "pointer",
-                },
-                "&:active": {
-                  bg: "gray.300",
-                },
-                "&:focus-visible": {
-                  bg: "gray.300",
-                },
-              }}
+              layerStyle="buttonBackgroundTransition.200"
             >
               0
             </Center>

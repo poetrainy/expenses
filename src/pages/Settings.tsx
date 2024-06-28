@@ -74,7 +74,7 @@ const Settings: FC = () => {
                     w="100%"
                     h="48px"
                     p="0 16px"
-                    layerStyle="listItemSingleLine"
+                    layerStyle="buttonBackgroundTransition.100"
                   >
                     <Text as="span">{label}</Text>
                     <ChevronRightIcon color="gray.500" boxSize="24px" />
