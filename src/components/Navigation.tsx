@@ -1,22 +1,21 @@
 import { FC } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   Center,
   Flex,
   Icon,
   Text,
   VStack,
-  Link as ChakraUILink,
 } from "@chakra-ui/react";
-import SettingsIcon from "@mui/icons-material/Settings";
+import DescriptionIcon from '@mui/icons-material/Description';
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 const NAVIGATION_LINKS = [
   {
     label: "収支",
-    icon: AccountBalanceIcon,
-    path: "/",
+    icon: DescriptionIcon,
+    path: "/expenses",
   },
   {
     label: "グラフ",
@@ -47,29 +46,51 @@ const Navigation: FC = () => {
       <Flex as="ul" justifyContent="space-between" w="100%" p="0 16px">
         {NAVIGATION_LINKS.map((link) => (
           <VStack key={link.path} as="li" alignItems="center" gap="4px">
-            <ChakraUILink
-              as={RouterLink}
+            <NavLink
               to={link.path}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              flexDir="column"
-              gap="4px"
-              w="80px"
-              color="gray.500"
-              p="12px 0 24px"
-              layerStyle="listItemSingleLine"
-            >
-              <Icon as={link.icon} boxSize="28px" />
-              <Text
-                as="span"
-                color="gray.500"
-                fontSize="11px"
-                fontWeight="bold"
-              >
-                {link.label}
-              </Text>
-            </ChakraUILink>
+              children={({ isActive }) => (
+                <Center
+                  flexDir="column"
+                  gap="4px"
+                  w="80px"
+                  color="gray.500"
+                  p="12px 0 24px"
+                  _hover={{
+                    textDecor: "none",
+                    ">*": {
+                      color: "gray.700",
+                      cursor: "pointer",
+                    },
+                  }}
+                  _active={{
+                    ">*": {
+                      color: "gray.800",
+                    },
+                  }}
+                  _focusVisible={{
+                    ">*": {
+                      color: "gray.800",
+                    },
+                  }}
+                >
+                  <Icon
+                    as={link.icon}
+                    color={isActive ? "gray.700" : "gray.500"}
+                    boxSize="28px"
+                    transition="color 0.2s"
+                  />
+                  <Text
+                    as="span"
+                    color={isActive ? "gray.700" : "gray.500"}
+                    fontSize="10px"
+                    fontWeight="bold"
+                    transition="color 0.2s"
+                  >
+                    {link.label}
+                  </Text>
+                </Center>
+              )}
+            ></NavLink>
           </VStack>
         ))}
       </Flex>
