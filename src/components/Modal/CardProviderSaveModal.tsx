@@ -16,7 +16,7 @@ const CardProviderSaveModal: FC<Props> = ({ isOpen, onClose, onClick }) => {
       isOpen={isOpen}
       onClose={onClose}
       size="xs"
-      heading="新しいカード会社を登録"
+      heading="新しいクレジットカード名を登録"
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>

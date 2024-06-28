@@ -27,6 +27,7 @@ import {
 } from "~/types/Expenses";
 import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
 import ListContainer from "~/components/ListContainer";
+import { useSetPageContext } from "~/context/usePageContext";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async () => {};
@@ -60,6 +61,8 @@ const ExpensesList: FC = () => {
     typeof loader
   >;
   const revalidator = useRevalidator();
+
+  useSetPageContext({ title: "poetrainy-expenses" });
 
   const [edit, setEdit] = useState<ExpensesCashType | undefined>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);

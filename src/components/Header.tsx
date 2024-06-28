@@ -1,11 +1,12 @@
 import { FC, useEffect, useState } from "react";
-import { useLocation, useRevalidator } from "react-router-dom";
+import { useLocation, useNavigate, useRevalidator } from "react-router-dom";
 import { Center, Heading, IconButton, useDisclosure } from "@chakra-ui/react";
-import { EditIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { ChevronLeftIcon, EditIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { saveExpensesCash } from "~/api/expenses";
 import MenuDrawer from "~/components/MenuDrawer";
 import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
 import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
+import { usePageContext } from "~/context/usePageContext";
 
 type Props = {
   archives: number[][];
@@ -14,6 +15,8 @@ type Props = {
 const Header: FC<Props> = ({ archives }) => {
   const location = useLocation();
   const revalidator = useRevalidator();
+  const navigate = useNavigate();
+  const pageContext = usePageContext();
   const isExpensesPage = location.pathname.startsWith("/expenses");
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -80,8 +83,19 @@ const Header: FC<Props> = ({ archives }) => {
         borderBottomColor="gray.100"
       >
         <Heading as="h1" color="gray.700" fontSize="16px">
-          poetrainy-expenses
+          {pageContext?.title ?? "poetrainy-expenses"}
         </Heading>
+        {pageContext?.backLink && (
+          <IconButton
+            icon={<ChevronLeftIcon boxSize="32px" />}
+            variant="ghost"
+            aria-label="前のページに戻る"
+            onClick={() => navigate(-1)}
+            m="auto"
+            pos="absolute"
+            inset="0 auto 0 16px"
+          />
+        )}
         {isExpensesPage && (
           <>
             <IconButton

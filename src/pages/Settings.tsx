@@ -3,6 +3,27 @@ import { Link as RouterLink } from "react-router-dom";
 import { Flex, Link as ChakraUILink, Text, VStack } from "@chakra-ui/react";
 import ListContainer from "~/components/ListContainer";
 import { ChevronRightIcon } from "@chakra-ui/icons";
+import { useSetPageContext } from "~/context/usePageContext";
+
+const SETTING_LINKS = [
+  {
+    heading: "カスタマイズ",
+    items: [
+      {
+        label: "目標金額",
+        path: "targetAmount",
+      },
+      {
+        label: "プリセット",
+        path: "presets",
+      },
+      {
+        label: "所持クレジットカード",
+        path: "cardProvider",
+      },
+    ],
+  },
+];
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const loader = async () => {
@@ -10,25 +31,7 @@ export const loader = async () => {
 };
 
 const Settings: FC = () => {
-  const LIST = [
-    {
-      heading: "カスタマイズ",
-      items: [
-        {
-          label: "目標金額",
-          path: "targetAmount",
-        },
-        {
-          label: "プリセット",
-          path: "presets",
-        },
-        {
-          label: "所持クレジットカード",
-          path: "cardProvider",
-        },
-      ],
-    },
-  ];
+  useSetPageContext({ title: "設定" });
 
   return (
     <>
@@ -39,7 +42,7 @@ const Settings: FC = () => {
         m="-24px -16px"
         p="24px 16px"
       >
-        {LIST.map(({ heading, items }) => (
+        {SETTING_LINKS.map(({ heading, items }) => (
           <VStack as="li" key={heading} alignItems="stretch" gap="6px" p={0}>
             <Text color="gray.500" fontWeight="bold" fontSize="12px">
               {heading}

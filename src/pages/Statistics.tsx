@@ -6,6 +6,7 @@ import { Bar } from "react-chartjs-2";
 import { getExpensesAllCash, getExpensesAllCard } from "~/api/expenses";
 import { getCardProvider, getTargetAmount } from "~/api/setting";
 import { LoaderData } from "~/types";
+import { useSetPageContext } from "~/context/usePageContext";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const loader = async () => {
@@ -56,6 +57,8 @@ export const loader = async () => {
 const Statistics: FC = () => {
   const { archives, cardProvider, totalAmount, targetAmount } =
     useLoaderData() as LoaderData<typeof loader>;
+
+  useSetPageContext({ title: "グラフ" });
 
   const options = {
     responsive: true,

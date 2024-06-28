@@ -29,6 +29,7 @@ import { SettingCardProviderType } from "~/types/Settings";
 import CardProviderDeleteModal from "~/components/Modal/CardProviderDeleteModal";
 import { getExpensesAllCard } from "~/api/expenses";
 import CardProviderSaveModal from "~/components/Modal/CardProviderSaveModal";
+import { useSetPageContext } from "~/context/usePageContext";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -107,6 +108,8 @@ const SettingCardProvider: FC = () => {
     typeof loader
   >;
   const submit = useSubmit();
+
+  useSetPageContext({ title: "所持クレジットカード", backLink: true });
 
   const {
     isOpen: isOpenCardProviderSaveModal,
@@ -211,7 +214,7 @@ const SettingCardProvider: FC = () => {
         >
           <AddIcon boxSize="16px" color="gray.700" />
           <Text as="span" color="gray.600">
-            新しいカード会社を登録
+            新しいクレジットカード名を登録
           </Text>
         </Center>
       </VStack>
