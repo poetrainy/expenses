@@ -128,10 +128,10 @@ const SettingCardProvider: FC = () => {
     submit(
       {
         intent: "save",
-        content: {
+        content: JSON.stringify({
           name,
           color: "#000000",
-        } satisfies SettingCardProviderBaseType,
+        } satisfies SettingCardProviderBaseType),
       },
       {
         method: "POST",
