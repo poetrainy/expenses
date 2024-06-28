@@ -171,7 +171,7 @@ const OperationExpensesModal: FC<Props> = ({
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Text color="gray.600" fontWeight="bold">
-            内容
+            メモ
           </Text>
           <Input
             type="text"
