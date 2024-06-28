@@ -230,7 +230,9 @@ const OperationExpensesModal: FC<Props> = ({
                 as="button"
                 type="button"
                 key={number}
-                onClick={() => setResult((p) => `${p}${number}`)}
+                onClick={() =>
+                  setResult((p) => (p.length >= 7 ? p : `${p}${number}`))
+                }
                 w="calc((100% - 4px * 2) / 3)"
                 h="56px"
                 fontSize="22px"
@@ -243,7 +245,9 @@ const OperationExpensesModal: FC<Props> = ({
             <Center
               as="button"
               type="button"
-              onClick={() => setResult((p) => (p.length ? `${p}0` : p))}
+              onClick={() =>
+                setResult((p) => (p.length >= 7 ? p : p.length ? `${p}0` : p))
+              }
               w="calc((100% - 4px * 2) / 3)"
               h="56px"
               fontSize="22px"
