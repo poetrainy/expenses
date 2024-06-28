@@ -204,7 +204,7 @@ const OperationExpensesModal: FC<Props> = ({
           </Center>
           <Text as="span" fontSize="40px" fontFamily="amount">
             <Text as="span" color="gray.500">
-              ¥
+              {`${type === "income" ? "+ " : ""}¥`}
             </Text>
             <Text
               as="span"
