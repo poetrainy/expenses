@@ -12,8 +12,12 @@ import ExpensesList, {
 import Root, { loader as loaderRoot } from "~/pages/Root";
 import { getPath } from "~/libs/getPath";
 import Statistics, { loader as loaderStatistics } from "~/pages/Statistics";
-import Settings, { loader as loaderSettings }  from "~/pages/Settings";
+import Settings, { loader as loaderSettings } from "~/pages/Settings";
 import "~/styles/index.css";
+import SettingCardProvider, {
+  action as actionSettingCardProvider,
+  loader as loaderSettingCardProvider,
+} from "~/pages/SettingCardProvider";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -40,10 +44,12 @@ const App = () => {
           element={<Statistics />}
           loader={loaderStatistics}
         />
+        <Route path="settings" element={<Settings />} loader={loaderSettings} />
         <Route
-          path="settings"
-          element={<Settings />}
-          loader={loaderSettings}
+          path="settings/cardProvider"
+          element={<SettingCardProvider />}
+          action={actionSettingCardProvider}
+          loader={loaderSettingCardProvider}
         />
       </Route>
     )

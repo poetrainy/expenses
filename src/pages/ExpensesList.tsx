@@ -13,13 +13,11 @@ import {
 } from "@chakra-ui/react";
 import {
   deleteExpensesCash,
-  getExpensesAllCard,
-  getExpensesAllCash,
   getExpensesFilteredCard,
   getExpensesFilteredCash,
   updateExpensesCash,
 } from "~/api/expenses";
-import { EXPENSES_CARD_PROVIDERS } from "~/constants/expenses";
+import { getCardProvider } from "~/api/setting";
 import { formatDate } from "~/libs/format";
 import { LoaderData } from "~/types";
 import {
@@ -27,7 +25,7 @@ import {
   ExpensesCashBaseType,
   ExpensesCashType,
 } from "~/types/Expenses";
-import OperationExpensesModal from "~/components/OperationExpensesModal";
+import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
 import ListContainer from "~/components/ListContainer";
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -38,37 +36,29 @@ export const loader = async ({ params }: { params: Params<string> }) => {
   const year = params.year!;
   const month = params.month!;
 
-  const allCash = await getExpensesAllCash();
   const filteredCash = await getExpensesFilteredCash(
     year,
     month.length === 1 ? `0${month}` : month
   );
-
-  const allCard = await getExpensesAllCard();
   const filteredCard = await getExpensesFilteredCard(
     year,
     month.length === 1 ? `0${month}` : month
   );
 
-  const archives = [
-    ...new Set([
-      ...allCash.map(({ date }) => date.substring(0, 7)),
-      ...allCard.map(({ date }) => date.substring(0, 7)),
-    ]),
-  ]
-    .sort()
-    .map((item) => item.split("-").map((number) => Number(number)));
+  const cardProvider = await getCardProvider();
 
   return {
     cash: filteredCash,
     card: filteredCard,
-    archives,
+    cardProvider,
     params: { year, month },
   };
 };
 
 const ExpensesList: FC = () => {
-  const { cash, card, params } = useLoaderData() as LoaderData<typeof loader>;
+  const { cash, card, cardProvider, params } = useLoaderData() as LoaderData<
+    typeof loader
+  >;
   const revalidator = useRevalidator();
 
   const [edit, setEdit] = useState<ExpensesCashType | undefined>();
@@ -229,8 +219,8 @@ const ExpensesList: FC = () => {
             </TabPanel>
             <TabPanel p={0}>
               <ListContainer>
-                {EXPENSES_CARD_PROVIDERS.map((provider) => (
-                  <Flex key={provider} as="li" w="100%">
+                {cardProvider.map((provider) => (
+                  <Flex key={provider.id} as="li" w="100%">
                     <Flex
                       as="button"
                       alignItems="center"
@@ -241,10 +231,10 @@ const ExpensesList: FC = () => {
                       layerStyle="buttonBackgroundTransition.100"
                     >
                       <Text color="gray.600" fontSize="14px" fontWeight="bold">
-                        {provider}
+                        {provider.name}
                       </Text>
                       <Text color="gray.700" fontSize="14px" fontWeight="bold">
-                        {`${card.find(({ cardProvider }) => cardProvider.includes(provider))?.amount.toLocaleString() ?? "（未登録）"}`}
+                        {`${card.find(({ cardProvider }) => cardProvider === provider)?.amount.toLocaleString() ?? "（未登録）"}`}
                       </Text>
                     </Flex>
                   </Flex>

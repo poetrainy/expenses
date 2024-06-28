@@ -1,8 +1,7 @@
 import { MicroCMSType } from "~/types/MicroCMS";
+import { SettingCardProviderType } from "~/types/Settings";
 
 export type ExpensesCash = "expenses" | "income";
-
-export type ExpensesCardProvider = "楽天カード" | "エポスカード";
 
 export type ExpensesCashBaseType = {
   date: string;
@@ -15,25 +14,9 @@ export type ExpensesCashBaseType = {
 export type ExpensesCardBaseType = {
   date: string;
   amount: number;
-  cardProvider: ExpensesCardProvider[];
+  cardProvider: SettingCardProviderType;
 };
 
 export type ExpensesCashType = MicroCMSType & ExpensesCashBaseType;
 
 export type ExpensesCardType = MicroCMSType & ExpensesCardBaseType;
-
-export type SettingBaseType = MicroCMSType & {
-  type: ("presets" | "targetAmount")[];
-};
-
-export type SettingPresetsType = SettingBaseType & {
-  presets: {
-    fieldId: "presets";
-    purpose: string;
-    amount: number;
-  };
-};
-
-export type SettingTargetAmountType = MicroCMSType & {
-  targetAmount: number;
-};

@@ -5,8 +5,6 @@ import {
   ExpensesCardType,
   ExpensesCashBaseType,
   ExpensesCashType,
-  SettingPresetsType,
-  SettingTargetAmountType,
 } from "~/types/Expenses";
 
 export const getExpensesAllCash: () => Promise<
@@ -163,27 +161,4 @@ export const deleteExpensesCard = async (id: string) => {
     endpoint: "card",
     contentId: id,
   });
-};
-
-export const getPresets: () => Promise<SettingPresetsType[]> = async () => {
-  const response = (
-    await client.get({
-      endpoint: "settings",
-      queries: {
-        offset: 0,
-        limit: 100,
-        filters: `type[begins_with]presets`,
-      },
-    })
-  ).contents as SettingPresetsType[];
-
-  return response;
-};
-
-export const getTargetAmount: () => Promise<number> = async () => {
-  const response = (await client.get({
-    endpoint: "settings/target-amount",
-  })) as SettingTargetAmountType;
-
-  return response.targetAmount;
 };

@@ -1,19 +1,18 @@
 import { FC } from "react";
 import { useLoaderData } from "react-router-dom";
-import {
-  getExpensesAllCash,
-  getExpensesAllCard,
-  getTargetAmount,
-} from "~/api/expenses";
-import { LoaderData } from "~/types";
+import { Center, Flex, Text, VStack } from "@chakra-ui/react";
 import "chart.js/auto";
 import { Bar } from "react-chartjs-2";
-import { Center, Flex, Text, VStack } from "@chakra-ui/react";
+import { getExpensesAllCash, getExpensesAllCard } from "~/api/expenses";
+import { getCardProvider, getTargetAmount } from "~/api/setting";
+import { LoaderData } from "~/types";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const loader = async () => {
   const allCash = await getExpensesAllCash();
   const allCard = await getExpensesAllCard();
+
+  const cardProvider = await getCardProvider();
 
   const archives = [
     ...new Set([
@@ -27,41 +26,36 @@ export const loader = async () => {
       .filter(({ date }) => date.startsWith(item))
       .map(({ amount }) => amount)
       .reduce((sum, element) => sum + element, 0);
-    const rakuten = allCard
-      .filter(
-        ({ date, cardProvider }) =>
-          cardProvider.includes("楽天カード") && date.startsWith(item)
-      )
-      .map(({ amount }) => amount)
-      .reduce((sum, element) => sum + element, 0);
-    const epos = allCard
-      .filter(
-        ({ date, cardProvider }) =>
-          cardProvider.includes("エポスカード") && date.startsWith(item)
-      )
-      .map(({ amount }) => amount)
-      .reduce((sum, element) => sum + element, 0);
+    const card = Object.fromEntries(
+      cardProvider.map((provider) => [
+        provider.id,
+        allCard
+          .filter(
+            ({ date, cardProvider }) =>
+              cardProvider.id === provider.id && date.startsWith(item)
+          )
+          .map(({ amount }) => amount)
+          .reduce((sum, element) => sum + element, 0),
+      ])
+    );
 
     return {
       period: item,
       cash,
-      card: {
-        rakuten,
-        epos,
-      },
-      total: rakuten + epos + cash,
+      card,
+      total:
+        Object.values(card).reduce((sum, element) => sum + element, 0) + cash,
     };
   });
 
   const targetAmount = await getTargetAmount();
 
-  return { archives, totalAmount, targetAmount };
+  return { archives, cardProvider, totalAmount, targetAmount };
 };
 
 const Statistics: FC = () => {
-  const { archives, totalAmount, targetAmount } = useLoaderData() as LoaderData<
-    typeof loader
-  >;
+  const { archives, cardProvider, totalAmount, targetAmount } =
+    useLoaderData() as LoaderData<typeof loader>;
 
   const options = {
     responsive: true,
@@ -80,16 +74,13 @@ const Statistics: FC = () => {
         data: totalAmount.map(({ cash }) => cash),
         backgroundColor: "rgba(99, 188, 255, 0.5)",
       },
-      {
-        label: "楽天カード",
-        data: totalAmount.map(({ card }) => card.rakuten),
-        backgroundColor: "rgba(224, 102, 102, 0.5)",
-      },
-      {
-        label: "エポスカード",
-        data: totalAmount.map(({ card }) => card.epos),
-        backgroundColor: "rgba(144, 99, 255, 0.5)",
-      },
+      ...cardProvider.map(({ id, name, color }) => {
+        return {
+          label: name,
+          data: totalAmount.map(({ card }) => card[id]),
+          backgroundColor: color,
+        };
+      }),
     ],
   };
 

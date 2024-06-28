@@ -4,7 +4,7 @@ import { Center, Heading, IconButton, useDisclosure } from "@chakra-ui/react";
 import { EditIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { saveExpensesCash } from "~/api/expenses";
 import MenuDrawer from "~/components/MenuDrawer";
-import OperationExpensesModal from "~/components/OperationExpensesModal";
+import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
 import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
 
 type Props = {

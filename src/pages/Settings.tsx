@@ -1,49 +1,30 @@
 import { FC } from "react";
-import { useLoaderData } from "react-router-dom";
-import { Flex, Text, VStack, useDisclosure } from "@chakra-ui/react";
-import { getPresets, getTargetAmount } from "~/api/expenses";
-import { LoaderData } from "~/types";
+import { Link as RouterLink } from "react-router-dom";
+import { Flex, Link as ChakraUILink, Text, VStack } from "@chakra-ui/react";
 import ListContainer from "~/components/ListContainer";
-import PresetsModal from "~/components/PresetsModal";
-import TargetAmountModal from "~/components/TargetAmountModal";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const loader = async () => {
-  const targetAmount = await getTargetAmount();
-  const presets = await getPresets();
-
-  return { targetAmount, presets };
+  return {};
 };
 
 const Settings: FC = () => {
-  const { targetAmount, presets } = useLoaderData() as LoaderData<
-    typeof loader
-  >;
-
-  const {
-    isOpen: isOpenTargetAmountModal,
-    onOpen: onOpenTargetAmountModal,
-    onClose: onCloseTargetAmountModal,
-  } = useDisclosure();
-
-  const {
-    isOpen: isOpenPresetsModal,
-    onOpen: onOpenPresetsModal,
-    onClose: onClosePresetsModal,
-  } = useDisclosure();
-
   const LIST = [
     {
       heading: "カスタマイズ",
       items: [
         {
           label: "目標金額",
-          onClick: () => onOpenTargetAmountModal(),
+          path: "targetAmount",
         },
         {
           label: "プリセット",
-          onClick: () => onOpenPresetsModal(),
+          path: "presets",
+        },
+        {
+          label: "所持クレジットカード",
+          path: "cardProvider",
         },
       ],
     },
@@ -64,37 +45,28 @@ const Settings: FC = () => {
               {heading}
             </Text>
             <ListContainer>
-              {items.map(({ label, onClick }) => (
+              {items.map(({ label, path }) => (
                 <Flex key={label} as="li" w="100%">
-                  <Flex
-                    as="button"
-                    onClick={onClick}
+                  <ChakraUILink
+                    as={RouterLink}
+                    to={path}
+                    display="flex"
                     alignItems="center"
                     justifyContent="space-between"
                     w="100%"
-                    h="48px"
+                    h="56px"
                     p="0 16px"
                     layerStyle="buttonBackgroundTransition.100"
                   >
                     <Text as="span">{label}</Text>
                     <ChevronRightIcon color="gray.500" boxSize="24px" />
-                  </Flex>
+                  </ChakraUILink>
                 </Flex>
               ))}
             </ListContainer>
           </VStack>
         ))}
       </VStack>
-      <TargetAmountModal
-        isOpen={isOpenTargetAmountModal}
-        onClose={onCloseTargetAmountModal}
-        amount={targetAmount}
-      />
-      <PresetsModal
-        isOpen={isOpenPresetsModal}
-        onClose={onClosePresetsModal}
-        presets={presets}
-      />
     </>
   );
 };

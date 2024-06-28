@@ -10,7 +10,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import ModalBase from "~/components/ModalBase";
+import ModalBase from "~/components/Modal/ModalBase";
 import { ExpensesCash, ExpensesCashType } from "~/types/Expenses";
 
 const NUMBERS = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
