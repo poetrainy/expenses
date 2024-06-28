@@ -25,7 +25,10 @@ import {
 import { LoaderData } from "~/types";
 import ListContainer from "~/components/ListContainer";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
-import { SettingCardProviderType } from "~/types/Settings";
+import {
+  SettingCardProviderBaseType,
+  SettingCardProviderType,
+} from "~/types/Settings";
 import CardProviderDeleteModal from "~/components/Modal/CardProviderDeleteModal";
 import { getExpensesAllCard } from "~/api/expenses";
 import CardProviderSaveModal from "~/components/Modal/CardProviderSaveModal";
@@ -38,10 +41,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   switch (intent) {
     case "save": {
-      const name = formData.get("name") as string;
+      const content = JSON.parse(
+        formData.get("content") as string
+      ) as SettingCardProviderBaseType;
 
       try {
-        await saveCardProvider(name);
+        await saveCardProvider(content);
 
         return redirect("/settings/cardProvider");
       } catch (e) {
@@ -123,7 +128,10 @@ const SettingCardProvider: FC = () => {
     submit(
       {
         intent: "save",
-        name,
+        content: {
+          name,
+          color: "#000000",
+        } satisfies SettingCardProviderBaseType,
       },
       {
         method: "POST",

@@ -3,6 +3,7 @@ import {
   SettingPresetsType,
   SettingCommonType,
   SettingCardProviderType,
+  SettingCardProviderBaseType,
 } from "~/types/Settings";
 
 export const getCardProvider: () => Promise<
@@ -22,13 +23,13 @@ export const getCardProvider: () => Promise<
 };
 
 export const saveCardProvider: (
-  name: string
-) => Promise<SettingCardProviderType> = async (name: string) => {
+  content: SettingCardProviderBaseType
+) => Promise<SettingCardProviderType> = async (
+  content: SettingCardProviderBaseType
+) => {
   const response = (await client.create({
     endpoint: "card_provider",
-    content: {
-      name,
-    },
+    content,
   })) as SettingCardProviderType;
 
   return response;

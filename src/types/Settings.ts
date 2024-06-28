@@ -1,9 +1,12 @@
 import { MicroCMSType } from "~/types/MicroCMS";
 
-export type SettingCardProviderType = MicroCMSType & {
+export type SettingCardProviderBaseType = {
   name: string;
   color: string;
 };
+
+export type SettingCardProviderType = MicroCMSType &
+  SettingCardProviderBaseType;
 
 export type SettingCommonType = MicroCMSType & {
   targetAmount: number;
