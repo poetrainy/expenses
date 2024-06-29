@@ -19,7 +19,7 @@ const SETTING_LINKS = [
       },
       {
         label: "所持クレジットカード",
-        path: "cardProvider",
+        path: "card",
       },
     ],
   },
