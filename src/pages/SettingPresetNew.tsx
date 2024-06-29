@@ -73,11 +73,10 @@ const SettingPresetNew: FC = () => {
         <AmountInputContainer>
           <Input
             type="number"
-            value={amount.length ? amount : 0}
+            value={amount}
+            placeholder="e.g. 1100"
             onChange={(e) =>
-              setAmount((p) =>
-                p.length >= 7 ? p : String(Number(e.target.value))
-              )
+              setAmount((p) => (p.length >= 7 ? p : e.target.value))
             }
           />
         </AmountInputContainer>
