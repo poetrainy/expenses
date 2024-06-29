@@ -65,7 +65,7 @@ const ExpensesList: FC = () => {
     typeof loader
   >;
   const revalidator = useRevalidator();
-  const {isSubmittingAndLoading} = useSubmitting()
+  const { isSubmittingAndLoading } = useSubmitting();
 
   useSetPageContext({ title: "poetrainy-expenses" });
 
@@ -75,7 +75,7 @@ const ExpensesList: FC = () => {
   const onExpensesUpdate = async (
     date: string,
     type: ExpensesCash,
-    purpose: string,
+    memo: string,
     amount: number
   ) => {
     if (!edit) {
@@ -86,7 +86,7 @@ const ExpensesList: FC = () => {
       await updateExpensesCash(edit.id, {
         date,
         type: [type],
-        purpose,
+        memo,
         amount,
       } satisfies ExpensesCashBaseType);
 
@@ -167,7 +167,7 @@ const ExpensesList: FC = () => {
                     <Box key={item.id} as="li" w="100%">
                       <Flex
                         as="button"
-                        aria-label={`「${item.purpose}」の詳細`}
+                        aria-label={`「${item.memo}」の詳細`}
                         onClick={() => setEdit(item)}
                         alignItems="stretch"
                         justifyContent="center"
@@ -196,7 +196,7 @@ const ExpensesList: FC = () => {
                             fontWeight="bold"
                             textAlign="left"
                           >
-                            {item.purpose}
+                            {item.memo}
                           </Text>
                           <Text
                             color={
@@ -271,8 +271,8 @@ const ExpensesList: FC = () => {
           onClose={() => setEdit(undefined)}
           isSubmitting={isSubmittingAndLoading}
           isDeleting={isDeleting}
-          onSave={(date, type, purpose, amount) =>
-            onExpensesUpdate(date, type, purpose, amount)
+          onSave={(date, type, memo, amount) =>
+            onExpensesUpdate(date, type, memo, amount)
           }
           onDelete={() => onExpensesDelete()}
           expenses={edit}

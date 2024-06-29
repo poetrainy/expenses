@@ -53,7 +53,7 @@ type Props = {
   onSave: (
     date: string,
     type: ExpensesCash,
-    purpose: string,
+    memo: string,
     amount: number
   ) => void;
 } & (
@@ -85,7 +85,7 @@ const OperationExpensesModal: FC<Props> = ({
   const [type, setType] = useState<ExpensesCash>(
     expenses?.type[0] ?? "expenses"
   );
-  const [purpose, setPurpose] = useState<string>(expenses?.purpose ?? "");
+  const [memo, setMemo] = useState<string>(expenses?.memo ?? "");
   const [result, setResult] = useState<string>(
     expenses?.amount ? String(expenses?.amount) : ""
   );
@@ -100,7 +100,7 @@ const OperationExpensesModal: FC<Props> = ({
       setPrevIsSubmitting(false);
       setDate("");
       setType("expenses");
-      setPurpose("");
+      setMemo("");
       setResult("");
     }
   }, [isDeleting, isSubmitting, prevIsDeleting, prevIsSubmitting]);
@@ -136,13 +136,13 @@ const OperationExpensesModal: FC<Props> = ({
             w="100%"
             type="button"
             onClick={() => {
-              onSave?.(`${date}`, type, purpose, Number(result));
+              onSave?.(`${date}`, type, memo, Number(result));
               setPrevIsSubmitting(true);
             }}
             isLoading={isSubmitting}
             loadingText={`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
             isDisabled={
-              !date.length || !purpose.length || !result.length || !!isDeleting
+              !date.length || !memo.length || !result.length || !!isDeleting
             }
             h="56px"
           >
@@ -175,8 +175,8 @@ const OperationExpensesModal: FC<Props> = ({
           </Text>
           <Input
             type="text"
-            value={purpose}
-            onChange={(e) => setPurpose(e.target.value)}
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
             w="80%"
             placeholder="e.g. やまもとクリニック"
           />

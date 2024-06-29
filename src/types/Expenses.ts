@@ -6,9 +6,8 @@ export type ExpensesCash = "expenses" | "income";
 export type ExpensesCashBaseType = {
   date: string;
   type: ExpensesCash[];
-  purpose: string;
+  memo: string;
   amount: number;
-  supplement?: string;
 };
 
 export type ExpensesCardBaseType = {

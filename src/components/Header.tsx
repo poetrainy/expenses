@@ -47,14 +47,14 @@ const Header: FC<Props> = ({ archives }) => {
   const onExpensesSave = async (
     date: string,
     type: ExpensesCash,
-    purpose: string,
+    memo: string,
     amount: number
   ) => {
     try {
       await saveExpensesCash({
         date,
         type: [type],
-        purpose,
+        memo,
         amount,
       } satisfies ExpensesCashBaseType);
 
@@ -128,8 +128,8 @@ const Header: FC<Props> = ({ archives }) => {
             isOpen={isOpenOperationExpensesModal}
             onClose={onCloseOperationExpensesModal}
             isSubmitting={isSubmittingAndLoading}
-            onSave={(date, type, purpose, amount) =>
-              onExpensesSave(date, type, purpose, amount)
+            onSave={(date, type, memo, amount) =>
+              onExpensesSave(date, type, memo, amount)
             }
           />
         </>
