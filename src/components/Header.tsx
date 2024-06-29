@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { useLocation, useNavigate, useRevalidator } from "react-router-dom";
 import { Center, Heading, IconButton, useDisclosure } from "@chakra-ui/react";
 import { ChevronLeftIcon, EditIcon, HamburgerIcon } from "@chakra-ui/icons";
@@ -7,6 +7,7 @@ import MenuDrawer from "~/components/MenuDrawer";
 import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
 import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
 import { usePageContext } from "~/context/usePageContext";
+import { useSubmitting } from "~/hooks/useSubmitting";
 
 type Props = {
   archives: number[][];
@@ -17,9 +18,9 @@ const Header: FC<Props> = ({ archives }) => {
   const revalidator = useRevalidator();
   const navigate = useNavigate();
   const pageContext = usePageContext();
-  const isExpensesPage = location.pathname.startsWith("/expenses");
+  const { isSubmittingAndLoading } = useSubmitting();
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const isExpensesPage = location.pathname.startsWith("/expenses");
 
   const {
     isOpen: isOpenMenuDrawer,
@@ -49,8 +50,6 @@ const Header: FC<Props> = ({ archives }) => {
     purpose: string,
     amount: number
   ) => {
-    setIsSubmitting(true);
-
     try {
       await saveExpensesCash({
         date,
@@ -63,8 +62,6 @@ const Header: FC<Props> = ({ archives }) => {
       onCloseOperationExpensesModal();
     } catch (e) {
       console.error(e);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -130,7 +127,7 @@ const Header: FC<Props> = ({ archives }) => {
             variant="new"
             isOpen={isOpenOperationExpensesModal}
             onClose={onCloseOperationExpensesModal}
-            isSubmitting={isSubmitting}
+            isSubmitting={isSubmittingAndLoading}
             onSave={(date, type, purpose, amount) =>
               onExpensesSave(date, type, purpose, amount)
             }

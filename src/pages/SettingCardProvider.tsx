@@ -1,18 +1,18 @@
 import { FC, useEffect, useState } from "react";
 import {
   ActionFunctionArgs,
+  Link as RouterLink,
   redirect,
   useLoaderData,
   useSubmit,
 } from "react-router-dom";
 import {
   Box,
-  Center,
   Flex,
   Icon,
+  Link as ChakraUILink,
   Text,
   VStack,
-  useDisclosure,
 } from "@chakra-ui/react";
 import {
   deleteCardProvider,
@@ -27,10 +27,10 @@ import {
   SettingCardProviderBaseType,
   SettingCardProviderType,
 } from "~/types/Settings";
-import CardProviderDeleteModal from "~/components/Modal/CardProviderDeleteModal";
 import { getExpensesAllCard } from "~/api/expenses";
-import CardProviderModal from "~/components/Modal/CardProviderModal";
 import { useSetPageContext } from "~/context/usePageContext";
+import CardProviderDeleteModal from "~/components/Modal/CardProviderDeleteModal";
+import CardProviderUpdateModal from "~/components/Modal/CardProviderUpdateModal";
 import SortChildContainer from "~/components/Sort/SortChildContainer";
 import SortParentContainer from "~/components/Sort/SortParentContainer";
 import MenuBase from "~/components/MenuBase";
@@ -51,7 +51,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       try {
         await saveCardProvider(content);
 
-        return redirect("/settings/cardProvider");
+        return redirect("/settings/card");
       } catch (e) {
         console.error(e);
 
@@ -68,7 +68,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       try {
         await updateCardProvider(id, content);
 
-        return redirect("/settings/cardProvider");
+        return redirect("/settings/card");
       } catch (e) {
         console.error(e);
 
@@ -82,7 +82,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       try {
         await deleteCardProvider(id);
 
-        return redirect("/settings/cardProvider");
+        return redirect("/settings/card");
       } catch (e) {
         console.error(e);
 
@@ -114,7 +114,7 @@ const SettingCardProvider: FC = () => {
     typeof loader
   >;
   const submit = useSubmit();
-  const isSubmitting = useSubmitting();
+  const { isSubmittingAndLoading } = useSubmitting();
 
   useSetPageContext({ title: "所持クレジットカード", backLink: true });
 
@@ -123,38 +123,16 @@ const SettingCardProvider: FC = () => {
     cardProvider.map(({ id }) => id)
   );
 
-  const {
-    isOpen: isOpenCardProviderSaveModal,
-    onOpen: onOpenCardProviderSaveModal,
-    onClose: onCloseCardProviderSaveModal,
-  } = useDisclosure();
   const [updateCardProviderData, setUpdateCardProviderData] =
     useState<SettingCardProviderType>();
   const [deleteCardProviderData, setDeleteCardProviderData] =
     useState<SettingCardProviderType>();
 
   useEffect(() => {
-    if (!isSubmitting) {
-      onCloseCardProviderSaveModal();
+    if (!isSubmittingAndLoading) {
       setDeleteCardProviderData(undefined);
     }
-  }, [isSubmitting, onCloseCardProviderSaveModal]);
-
-  const onSaveCardProvider = (name: string, color: string) => {
-    submit(
-      {
-        intent: "save",
-        content: JSON.stringify({
-          name,
-          color,
-          order: cardProvider.length + 1,
-        } satisfies SettingCardProviderBaseType),
-      },
-      {
-        method: "POST",
-      }
-    );
-  };
+  }, [isSubmittingAndLoading]);
 
   const onUpdateCardProvider = (
     id: string,
@@ -229,7 +207,7 @@ const SettingCardProvider: FC = () => {
           opacity={1}
           transition="opacity 0.2s"
           sx={{
-            ...(isSubmitting && {
+            ...(isSubmittingAndLoading && {
               opacity: 0.4,
               pointerEvents: "none",
             }),
@@ -257,7 +235,7 @@ const SettingCardProvider: FC = () => {
                   opacity={1}
                   transition="opacity 0.2s"
                   sx={{
-                    ...(isSubmitting && {
+                    ...(isSubmittingAndLoading && {
                       opacity: 0.4,
                       pointerEvents: "none",
                     }),
@@ -313,9 +291,12 @@ const SettingCardProvider: FC = () => {
           </ListContainer>
         </SortParentContainer>
         {!sortable && (
-          <Center
-            as="button"
-            onClick={() => onOpenCardProviderSaveModal()}
+          <ChakraUILink
+            as={RouterLink}
+            to="new"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
             gap="8px"
             w="fit-content"
             m="auto"
@@ -328,7 +309,7 @@ const SettingCardProvider: FC = () => {
             _active={{ opacity: 0.6 }}
             _focusVisible={{ opacity: 0.6 }}
             sx={{
-              ...(isSubmitting && {
+              ...(isSubmittingAndLoading && {
                 opacity: 0.4,
                 pointerEvents: "none",
               }),
@@ -338,21 +319,10 @@ const SettingCardProvider: FC = () => {
             <Text as="span" color="gray.600">
               クレジットカード登録
             </Text>
-          </Center>
+          </ChakraUILink>
         )}
       </VStack>
-      <CardProviderModal
-        key="new"
-        variant="new"
-        isOpen={isOpenCardProviderSaveModal}
-        onClose={onCloseCardProviderSaveModal}
-        onClick={(name: string, color: string) =>
-          onSaveCardProvider(name, color)
-        }
-      />
-      <CardProviderModal
-        key="edit"
-        variant="edit"
+      <CardProviderUpdateModal
         isOpen={!!updateCardProviderData}
         onClose={() => setUpdateCardProviderData(undefined)}
         onClick={(name: string, color: string) =>
@@ -363,7 +333,8 @@ const SettingCardProvider: FC = () => {
             order: updateCardProviderData?.order,
           })
         }
-        cardProvider={updateCardProviderData}
+        prevName={updateCardProviderData?.name ?? ""}
+        prevColor={updateCardProviderData?.color ?? ""}
       />
       <CardProviderDeleteModal
         isOpen={!!deleteCardProviderData}

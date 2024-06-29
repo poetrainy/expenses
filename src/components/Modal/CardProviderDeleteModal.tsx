@@ -18,7 +18,7 @@ const CardProviderDeleteModal: FC<Props> = ({
   cardDataLength,
   onClick,
 }) => {
-  const isSubmitting = useSubmitting();
+  const { isSubmittingAndLoading } = useSubmitting();
 
   return (
     <ModalBase
@@ -30,7 +30,7 @@ const CardProviderDeleteModal: FC<Props> = ({
         <>
           <Button
             variant="ghost"
-            isDisabled={isSubmitting}
+            isDisabled={isSubmittingAndLoading}
             onClick={onClose}
             fontSize="14px"
           >
@@ -38,8 +38,8 @@ const CardProviderDeleteModal: FC<Props> = ({
           </Button>
           <Button
             colorScheme="red"
-            isDisabled={isSubmitting}
-            isLoading={isSubmitting}
+            isDisabled={isSubmittingAndLoading}
+            isLoading={isSubmittingAndLoading}
             loadingText="削除"
             onClick={onClick}
             fontSize="14px"

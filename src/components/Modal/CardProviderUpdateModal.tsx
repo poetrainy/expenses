@@ -3,51 +3,48 @@ import { Box, Button, Flex, Input, Text, VStack } from "@chakra-ui/react";
 import ModalBase from "~/components/Modal/ModalBase";
 import { GRAPH_COLORS } from "~/constants/colors";
 import { useSubmitting } from "~/hooks/useSubmitting";
-import { SettingCardProviderType } from "~/types/Settings";
 
 type Props = {
-  variant: "new" | "edit";
   isOpen: boolean;
   onClose: () => void;
   onClick: (name: string, color: string) => void;
-  cardProvider?: SettingCardProviderType;
+  prevName: string;
+  prevColor: string;
 };
 
-const CardProviderSaveModal: FC<Props> = ({
-  variant,
+const CardProviderUpdateModal: FC<Props> = ({
   isOpen,
   onClose,
   onClick,
-  cardProvider,
+  prevName,
+  prevColor,
 }) => {
-  const isSubmitting = useSubmitting();
+  const { isSubmittingAndLoading } = useSubmitting();
   const [submitCount, setSubmitCount] = useState(0);
 
-  const [name, setName] = useState<string>(cardProvider?.name ?? "");
-  const [color, setColor] = useState<string>(
-    cardProvider?.color ?? GRAPH_COLORS[0]
-  );
+  const [name, setName] = useState<string>(prevName);
+  const [color, setColor] = useState<string>(prevColor);
 
   useEffect(() => {
-    if (!isSubmitting && !!submitCount) {
+    if (!isSubmittingAndLoading && !!submitCount) {
       onClose();
       setName("");
       setColor(GRAPH_COLORS[0]);
       setSubmitCount(0);
     }
-  }, [isSubmitting, submitCount, onClose]);
+  }, [isSubmittingAndLoading, submitCount, onClose]);
 
   return (
     <ModalBase
       isOpen={isOpen}
       onClose={onClose}
       size="xs"
-      heading={`クレジットカード${variant === "new" ? "登録" : "編集"}`}
+      heading="クレジットカード編集"
       footer={
         <>
           <Button
             variant="ghost"
-            isDisabled={isSubmitting}
+            isDisabled={isSubmittingAndLoading}
             onClick={onClose}
             fontSize="14px"
           >
@@ -55,16 +52,16 @@ const CardProviderSaveModal: FC<Props> = ({
           </Button>
           <Button
             type="button"
-            isDisabled={!name.length || isSubmitting}
-            isLoading={isSubmitting}
-            loadingText={variant === "new" ? "登録" : "保存"}
+            isDisabled={!name.length || isSubmittingAndLoading}
+            isLoading={isSubmittingAndLoading}
+            loadingText="保存"
             onClick={() => {
               onClick(name, color);
               setSubmitCount((p) => p + 1);
             }}
             fontSize="14px"
           >
-            {variant === "new" ? "登録" : "保存"}
+            保存
           </Button>
         </>
       }
@@ -75,7 +72,7 @@ const CardProviderSaveModal: FC<Props> = ({
           <Input
             value={name}
             placeholder="e.g. 楽天カード"
-            isDisabled={isSubmitting}
+            isDisabled={isSubmittingAndLoading}
             onChange={(e) => setName(e.target.value)}
           />
         </VStack>
@@ -86,7 +83,7 @@ const CardProviderSaveModal: FC<Props> = ({
               <Box
                 key={graphColor}
                 as="button"
-                disabled={isSubmitting}
+                disabled={isSubmittingAndLoading}
                 onClick={() => setColor(graphColor)}
                 boxSize="28px"
                 minW="28px"
@@ -111,4 +108,4 @@ const CardProviderSaveModal: FC<Props> = ({
   );
 };
 
-export default CardProviderSaveModal;
+export default CardProviderUpdateModal;

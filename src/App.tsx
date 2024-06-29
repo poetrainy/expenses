@@ -18,6 +18,10 @@ import SettingCardProvider, {
   action as actionSettingCardProvider,
   loader as loaderSettingCardProvider,
 } from "~/pages/SettingCardProvider";
+import SettingCardProviderNew, {
+  action as actionSettingCardProviderNew,
+  loader as loaderSettingCardProviderNew,
+} from "~/pages/SettingCardProviderNew";
 import SettingPresets, {
   action as actionSettingPresets,
   loader as loaderSettingPresets,
@@ -54,10 +58,16 @@ const App = () => {
         />
         <Route path="settings" element={<Settings />} loader={loaderSettings} />
         <Route
-          path="settings/cardProvider"
+          path="settings/card"
           element={<SettingCardProvider />}
           action={actionSettingCardProvider}
           loader={loaderSettingCardProvider}
+        />
+        <Route
+          path="settings/card/new"
+          element={<SettingCardProviderNew />}
+          action={actionSettingCardProviderNew}
+          loader={loaderSettingCardProviderNew}
         />
         <Route
           path="settings/presets"

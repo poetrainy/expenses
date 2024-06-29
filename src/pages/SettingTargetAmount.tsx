@@ -40,7 +40,7 @@ export const loader = async () => {
 const SettingTargetAmount: FC = () => {
   const { targetAmount } = useLoaderData() as LoaderData<typeof loader>;
   const submit = useSubmit();
-  const isSubmitting = useSubmitting();
+  const { isSubmittingAndLoading } = useSubmitting();
 
   useSetPageContext({ title: "目標金額", backLink: true });
 
@@ -60,7 +60,7 @@ const SettingTargetAmount: FC = () => {
   };
 
   return (
-    <VStack alignItems="stretch" gap="24px">
+    <VStack alignItems="stretch" gap="24px" p={0}>
       <VStack alignItems="stretch" gap="8px" p={0}>
         <Text as="h2" textStyle="textHeading">
           目標金額
@@ -83,7 +83,7 @@ const SettingTargetAmount: FC = () => {
           <Input
             type="number"
             value={updateTargetAmount}
-            placeholder="200000"
+            placeholder="e.g. 200000"
             onChange={(e) =>
               setUpdateAmount((p) => (p.length >= 7 ? p : e.target.value))
             }
@@ -98,8 +98,8 @@ const SettingTargetAmount: FC = () => {
         </Text>
       </VStack>
       <Button
-        isLoading={isSubmitting}
-        isDisabled={isSubmitting}
+        isLoading={isSubmittingAndLoading}
+        isDisabled={isSubmittingAndLoading}
         loadingText="保存"
         onClick={() => onUpdateTargetAmount()}
         fontSize="14px"

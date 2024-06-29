@@ -31,6 +31,7 @@ import {
 import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
 import ListContainer from "~/components/ListContainer";
 import { useSetPageContext } from "~/context/usePageContext";
+import { useSubmitting } from "~/hooks/useSubmitting";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async () => {};
@@ -64,11 +65,11 @@ const ExpensesList: FC = () => {
     typeof loader
   >;
   const revalidator = useRevalidator();
+  const {isSubmittingAndLoading} = useSubmitting()
 
   useSetPageContext({ title: "poetrainy-expenses" });
 
   const [edit, setEdit] = useState<ExpensesCashType | undefined>();
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const onExpensesUpdate = async (
@@ -80,8 +81,6 @@ const ExpensesList: FC = () => {
     if (!edit) {
       return;
     }
-
-    setIsSubmitting(true);
 
     try {
       await updateExpensesCash(edit.id, {
@@ -95,11 +94,8 @@ const ExpensesList: FC = () => {
       setEdit(undefined);
     } catch (e) {
       console.error(e);
-    } finally {
-      setIsSubmitting(false);
     }
 
-    setIsSubmitting(false);
     setEdit(undefined);
   };
 
@@ -273,7 +269,7 @@ const ExpensesList: FC = () => {
           variant="edit"
           isOpen={!!edit}
           onClose={() => setEdit(undefined)}
-          isSubmitting={isSubmitting}
+          isSubmitting={isSubmittingAndLoading}
           isDeleting={isDeleting}
           onSave={(date, type, purpose, amount) =>
             onExpensesUpdate(date, type, purpose, amount)
