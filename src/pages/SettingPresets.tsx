@@ -1,6 +1,12 @@
-import { Flex, Text, VStack } from "@chakra-ui/react";
 import { FC } from "react";
-import { ActionFunctionArgs, redirect, useLoaderData } from "react-router-dom";
+import {
+  ActionFunctionArgs,
+  redirect,
+  useLoaderData,
+  Link as RouterLink,
+} from "react-router-dom";
+import { Flex, Text, VStack, Link as ChakraUILink } from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
 import {
   savePreset,
   updatePreset,
@@ -11,6 +17,7 @@ import ListContainer from "~/components/ListContainer";
 import { useSetPageContext } from "~/context/usePageContext";
 import { LoaderData } from "~/types";
 import { SettingPresetBaseType } from "~/types/Settings";
+import { useSubmitting } from "~/hooks/useSubmitting";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -76,6 +83,8 @@ export const loader = async () => {
 
 const SettingPresets: FC = () => {
   const { presets } = useLoaderData() as LoaderData<typeof loader>;
+  const { isSubmittingAndLoading } = useSubmitting();
+
   useSetPageContext({ title: "プリセット", backLink: true });
 
   return (
@@ -97,6 +106,34 @@ const SettingPresets: FC = () => {
           </Flex>
         ))}
       </ListContainer>
+      <ChakraUILink
+        as={RouterLink}
+        to="new"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        gap="8px"
+        w="fit-content"
+        p="12px 0"
+        fontSize="14px"
+        fontWeight="bold"
+        opacity={1}
+        transition="opacity 0.2s"
+        _hover={{ opacity: 0.8 }}
+        _active={{ opacity: 0.6 }}
+        _focusVisible={{ opacity: 0.6 }}
+        sx={{
+          ...(isSubmittingAndLoading && {
+            opacity: 0.4,
+            pointerEvents: "none",
+          }),
+        }}
+      >
+        <AddIcon boxSize="16px" color="gray.700" />
+        <Text as="span" color="gray.600">
+          プリセット登録
+        </Text>
+      </ChakraUILink>
     </VStack>
   );
 };

@@ -26,6 +26,9 @@ import SettingPresets, {
   action as actionSettingPresets,
   loader as loaderSettingPresets,
 } from "~/pages/SettingPresets";
+import SettingPresetNew, {
+  action as actionSettingPresetNew
+} from "~/pages/SettingPresetNew";
 import SettingTargetAmount, {
   action as actionSettingTargetAmount,
   loader as loaderSettingTargetAmount,
@@ -74,6 +77,11 @@ const App = () => {
           element={<SettingPresets />}
           action={actionSettingPresets}
           loader={loaderSettingPresets}
+        />
+        <Route
+          path="settings/presets/new"
+          element={<SettingPresetNew />}
+          action={actionSettingPresetNew}
         />
         <Route
           path="settings/targetAmount"
