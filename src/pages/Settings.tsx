@@ -60,7 +60,7 @@ const Settings: FC = () => {
                     layerStyle="buttonBackgroundTransition.100"
                   >
                     <Text as="span">{label}</Text>
-                    <ChevronRightIcon color="gray.500" boxSize="24px" />
+                    <ChevronRightIcon color="gray.600" boxSize="24px" />
                   </ChakraUILink>
                 </Flex>
               ))}

@@ -299,8 +299,7 @@ const SettingCardProvider: FC = () => {
             alignItems="center"
             gap="8px"
             w="fit-content"
-            m="auto"
-            p="8px 16px"
+            p="12px 0"
             fontSize="14px"
             fontWeight="bold"
             opacity={1}
