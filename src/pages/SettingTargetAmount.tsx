@@ -1,4 +1,4 @@
-import { Button, Flex, Input, Text, VStack } from "@chakra-ui/react";
+import { Button, Input, Text, VStack } from "@chakra-ui/react";
 import { FC, useState } from "react";
 import {
   ActionFunctionArgs,
@@ -7,6 +7,7 @@ import {
   useSubmit,
 } from "react-router-dom";
 import { getTargetAmount, updateCommon } from "~/api/setting";
+import AmountInputContainer from "~/components/AmountInputContainer";
 import { useSetPageContext } from "~/context/usePageContext";
 import { useSubmitting } from "~/hooks/useSubmitting";
 import { LoaderData } from "~/types";
@@ -44,6 +45,7 @@ const SettingTargetAmount: FC = () => {
 
   useSetPageContext({ title: "目標金額", backLink: true });
 
+  const [submitCount, setSubmitCount] = useState(0);
   const [updateTargetAmount, setUpdateAmount] = useState(String(targetAmount));
 
   const onUpdateTargetAmount = () => {
@@ -65,21 +67,7 @@ const SettingTargetAmount: FC = () => {
         <Text as="h2" textStyle="textHeading">
           目標金額
         </Text>
-        <Flex
-          fontFamily="amount"
-          pos="relative"
-          sx={{
-            "&::after": {
-              content: "'¥'",
-              h: "fit-content",
-              m: "auto",
-              pos: "absolute",
-              inset: "0 0 0 16px",
-              pointerEvents: "none",
-              zIndex: 5,
-            },
-          }}
-        >
+        <AmountInputContainer>
           <Input
             type="number"
             value={updateTargetAmount}
@@ -87,21 +75,20 @@ const SettingTargetAmount: FC = () => {
             onChange={(e) =>
               setUpdateAmount((p) => (p.length >= 7 ? p : e.target.value))
             }
-            h="56px"
-            bg="white"
-            rounded="8px"
-            textAlign="right"
           />
-        </Flex>
-        <Text color="gray.500" fontSize="12px">
+        </AmountInputContainer>
+        <Text color="gray.600" fontSize="12px">
           0〜999999の間を指定できます
         </Text>
       </VStack>
       <Button
-        isLoading={isSubmittingAndLoading}
+        isLoading={isSubmittingAndLoading && !!submitCount}
         isDisabled={isSubmittingAndLoading}
         loadingText="保存"
-        onClick={() => onUpdateTargetAmount()}
+        onClick={() => {
+          onUpdateTargetAmount();
+          setSubmitCount((p) => p + 1);
+        }}
         fontSize="14px"
       >
         保存

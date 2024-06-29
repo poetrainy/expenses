@@ -20,24 +20,32 @@ const CardProviderUpdateModal: FC<Props> = ({
   prevColor,
 }) => {
   const { isSubmittingAndLoading } = useSubmitting();
+  
   const [submitCount, setSubmitCount] = useState(0);
 
-  const [name, setName] = useState<string>(prevName);
-  const [color, setColor] = useState<string>(prevColor);
+  const modalClose = () => {
+    onClose();
+    setName("");
+    setColor("");
+    setSubmitCount(0);
+  };
 
   useEffect(() => {
     if (!isSubmittingAndLoading && !!submitCount) {
       onClose();
       setName("");
-      setColor(GRAPH_COLORS[0]);
+      setColor("");
       setSubmitCount(0);
     }
-  }, [isSubmittingAndLoading, submitCount, onClose]);
+  }, [isSubmittingAndLoading, onClose, submitCount]);
+
+  const [name, setName] = useState<string>("");
+  const [color, setColor] = useState<string>("");
 
   return (
     <ModalBase
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={modalClose}
       size="xs"
       heading="クレジットカード編集"
       footer={
@@ -45,14 +53,14 @@ const CardProviderUpdateModal: FC<Props> = ({
           <Button
             variant="ghost"
             isDisabled={isSubmittingAndLoading}
-            onClick={onClose}
+            onClick={modalClose}
             fontSize="14px"
           >
             キャンセル
           </Button>
           <Button
             type="button"
-            isDisabled={!name.length || isSubmittingAndLoading}
+            isDisabled={isSubmittingAndLoading}
             isLoading={isSubmittingAndLoading}
             loadingText="保存"
             onClick={() => {
@@ -70,7 +78,7 @@ const CardProviderUpdateModal: FC<Props> = ({
         <VStack alignItems="stretch" gap="4px">
           <Text textStyle="textHeading">クレジットカード名</Text>
           <Input
-            value={name}
+            defaultValue={prevName}
             placeholder="e.g. 楽天カード"
             isDisabled={isSubmittingAndLoading}
             onChange={(e) => setName(e.target.value)}
@@ -92,9 +100,8 @@ const CardProviderUpdateModal: FC<Props> = ({
                 rounded="8px"
                 border="2px solid white"
                 outlineColor="transparent"
-                transition="outline-color 0.2s"
                 sx={{
-                  ...(color === graphColor && {
+                  ...((!color.length ? prevColor : color) === graphColor && {
                     outline: "3px solid",
                     outlineColor: "blue.100",
                   }),
