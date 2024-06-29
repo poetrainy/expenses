@@ -9,11 +9,15 @@ export type SettingCardProviderBaseType = {
 export type SettingCardProviderType = MicroCMSType &
   SettingCardProviderBaseType;
 
-export type SettingCommonType = MicroCMSType & {
+export type SettingCommonBaseType = {
   targetAmount: number;
 };
 
-export type SettingPresetsType = MicroCMSType & {
+export type SettingCommonType = MicroCMSType & SettingCommonBaseType;
+
+export type SettingPresetBaseType = {
   memo: string;
   amount: number;
 };
+
+export type SettingPresetType = MicroCMSType & SettingPresetBaseType;

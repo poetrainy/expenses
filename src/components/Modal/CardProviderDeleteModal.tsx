@@ -28,7 +28,12 @@ const CardProviderDeleteModal: FC<Props> = ({
       heading={`「${name}」の削除`}
       footer={
         <>
-          <Button variant="ghost" isDisabled={isSubmitting} onClick={onClose}>
+          <Button
+            variant="ghost"
+            isDisabled={isSubmitting}
+            onClick={onClose}
+            fontSize="14px"
+          >
             キャンセル
           </Button>
           <Button
@@ -37,6 +42,7 @@ const CardProviderDeleteModal: FC<Props> = ({
             isLoading={isSubmitting}
             loadingText="削除"
             onClick={onClick}
+            fontSize="14px"
           >
             削除
           </Button>

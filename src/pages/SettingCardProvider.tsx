@@ -97,10 +97,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         return null;
       }
     }
-
-    default: {
-      return null;
-    }
   }
 };
 

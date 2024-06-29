@@ -31,7 +31,12 @@ const CardProviderSaveModal: FC<Props> = ({ isOpen, onClose, onClick }) => {
       heading="クレジットカード登録"
       footer={
         <>
-          <Button variant="ghost" isDisabled={isSubmitting} onClick={onClose}>
+          <Button
+            variant="ghost"
+            isDisabled={isSubmitting}
+            onClick={onClose}
+            fontSize="14px"
+          >
             キャンセル
           </Button>
           <Button
@@ -40,6 +45,7 @@ const CardProviderSaveModal: FC<Props> = ({ isOpen, onClose, onClick }) => {
             isLoading={isSubmitting}
             loadingText="登録"
             onClick={() => onClick(name, color)}
+            fontSize="14px"
           >
             登録
           </Button>

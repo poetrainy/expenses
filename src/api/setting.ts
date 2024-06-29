@@ -1,9 +1,11 @@
 import { client, settingClient } from "~/libs/client";
 import {
-  SettingPresetsType,
+  SettingPresetType,
   SettingCommonType,
   SettingCardProviderType,
   SettingCardProviderBaseType,
+  SettingPresetBaseType,
+  SettingCommonBaseType,
 } from "~/types/Settings";
 
 export const getCardProvider: () => Promise<
@@ -59,7 +61,7 @@ export const deleteCardProvider = async (id: string) => {
   });
 };
 
-export const getPresets: () => Promise<SettingPresetsType[]> = async () => {
+export const getPresets: () => Promise<SettingPresetType[]> = async () => {
   const response = (
     await settingClient.get({
       endpoint: "presets",
@@ -68,9 +70,43 @@ export const getPresets: () => Promise<SettingPresetsType[]> = async () => {
         limit: 100,
       },
     })
-  ).contents as SettingPresetsType[];
+  ).contents as SettingPresetType[];
 
   return response;
+};
+
+export const savePreset: (
+  content: SettingPresetBaseType
+) => Promise<SettingPresetType> = async (content: SettingPresetBaseType) => {
+  const response = (await settingClient.create({
+    endpoint: "presets",
+    content,
+  })) as SettingPresetType;
+
+  return response;
+};
+
+export const updatePreset: (
+  id: string,
+  content: SettingPresetBaseType
+) => Promise<SettingPresetType> = async (
+  id: string,
+  content: SettingPresetBaseType
+) => {
+  const response = (await settingClient.update({
+    endpoint: "presets",
+    contentId: id,
+    content,
+  })) as SettingPresetType;
+
+  return response;
+};
+
+export const deletePreset = async (id: string) => {
+  await settingClient.delete({
+    endpoint: "presets",
+    contentId: id,
+  });
 };
 
 export const getTargetAmount: () => Promise<number> = async () => {
@@ -79,4 +115,15 @@ export const getTargetAmount: () => Promise<number> = async () => {
   })) as SettingCommonType;
 
   return response.targetAmount;
+};
+
+export const updateCommon: (
+  content: SettingCommonBaseType
+) => Promise<SettingCommonType> = async (content: SettingCommonBaseType) => {
+  const response = (await settingClient.update({
+    endpoint: "common",
+    content,
+  })) as SettingCommonType;
+
+  return response;
 };

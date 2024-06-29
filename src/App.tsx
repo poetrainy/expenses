@@ -18,6 +18,14 @@ import SettingCardProvider, {
   action as actionSettingCardProvider,
   loader as loaderSettingCardProvider,
 } from "~/pages/SettingCardProvider";
+import SettingPresets, {
+  action as actionSettingPresets,
+  loader as loaderSettingPresets,
+} from "~/pages/SettingPresets";
+import SettingTargetAmount, {
+  action as actionSettingTargetAmount,
+  loader as loaderSettingTargetAmount,
+} from "~/pages/SettingTargetAmount";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -50,6 +58,18 @@ const App = () => {
           element={<SettingCardProvider />}
           action={actionSettingCardProvider}
           loader={loaderSettingCardProvider}
+        />
+        <Route
+          path="settings/presets"
+          element={<SettingPresets />}
+          action={actionSettingPresets}
+          loader={loaderSettingPresets}
+        />
+        <Route
+          path="settings/targetAmount"
+          element={<SettingTargetAmount />}
+          action={actionSettingTargetAmount}
+          loader={loaderSettingTargetAmount}
         />
       </Route>
     )
