@@ -9,15 +9,8 @@ import {
   Text,
   ModalOverlay,
   ModalFooter,
-  Icon,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Button,
 } from "@chakra-ui/react";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import MenuBase from "~/components/MenuBase";
 
 type Props = ModalProps & {
   heading: string;
@@ -31,7 +24,7 @@ type Props = ModalProps & {
 
 const ModalBase: FC<Props> = ({
   heading,
-  headerLeftAction,
+  headerLeftAction = [],
   footer,
   ...props
 }) => (
@@ -39,39 +32,13 @@ const ModalBase: FC<Props> = ({
     <ModalOverlay />
     <ModalContent gap="16px" p="0 16px 16px">
       <ModalHeader p="16px 0" fontSize="18px" textAlign="center" pos="relative">
-        {headerLeftAction?.length && (
-          <Menu autoSelect={false}>
-            <MenuButton
-              as={IconButton}
-              icon={<Icon as={MoreVertIcon} boxSize="20px" />}
-              aria-label="メニューを開く"
-              variant="ghost"
-              boxSize="32px"
-              minW="32px"
-              m="auto"
-              pos="absolute"
-              inset="0 auto 0 0"
-            />
-            <MenuList rounded="16px" overflow="hidden">
-              {headerLeftAction.map(({ variant, label, onClick }) => (
-                <MenuItem
-                  key={label}
-                  as={Button}
-                  variant="ghost"
-                  colorScheme={variant === "danger" ? "red" : undefined}
-                  onClick={onClick}
-                  justifyContent="flex-start"
-                  h="44px"
-                  fontSize="14px"
-                  fontWeight="normal"
-                  rounded="0"
-                  {...(variant === "danger" && { color: "red.500" })}
-                >
-                  {label}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
+        {!!headerLeftAction.length  && (
+          <MenuBase
+            menu={headerLeftAction}
+            m="auto"
+            pos="absolute"
+            inset="0 auto 0 0"
+          />
         )}
         <Text as="span">{heading}</Text>
         <ModalCloseButton m="auto" pos="absolute" inset="0 0 0 auto" />

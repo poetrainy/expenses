@@ -44,9 +44,7 @@ const Settings: FC = () => {
       >
         {SETTING_LINKS.map(({ heading, items }) => (
           <VStack as="li" key={heading} alignItems="stretch" gap="6px" p={0}>
-            <Text color="gray.500" fontWeight="bold" fontSize="12px">
-              {heading}
-            </Text>
+            <Text textStyle="textHeading">{heading}</Text>
             <ListContainer>
               {items.map(({ label, path }) => (
                 <Flex key={label} as="li" w="100%">

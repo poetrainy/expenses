@@ -22,6 +22,28 @@ const fonts = {
   body: "'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif",
   amount: "'Inter', sans-serif",
 };
+const textStyles = {
+  textHeading: {
+    color: "gray.500",
+    fontWeight: "bold",
+    fontSize: "12px",
+  },
+  textButton:{
+    color: "blue.500",
+    fontSize: "12px",
+    transition: "color 0.2s",
+    "&:hover": {
+      color: "blue.600",
+      cursor: "pointer",
+    },
+    "&:active": {
+      color: "blue.700",
+    },
+    "&:focus-visible": {
+      color: "blue.700",
+    },
+  }
+};
 const layerStyles = {
   buttonBackgroundTransition: {
     100: {
@@ -75,6 +97,7 @@ const layerStyles = {
 const theme = extendTheme({
   styles,
   fonts,
+  textStyles,
   layerStyles,
 });
 

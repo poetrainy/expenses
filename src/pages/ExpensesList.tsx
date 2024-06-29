@@ -2,7 +2,10 @@ import { FC, useState } from "react";
 import { Params, useLoaderData, useRevalidator } from "react-router-dom";
 import {
   Box,
+  Card,
+  CardBody,
   Flex,
+  SimpleGrid,
   Tab,
   TabList,
   TabPanel,
@@ -221,28 +224,46 @@ const ExpensesList: FC = () => {
               )}
             </TabPanel>
             <TabPanel p={0}>
-              <ListContainer>
+              <SimpleGrid
+                columns={2}
+                spacing="8px"
+                bg="white"
+                m="0 -16px"
+                p="16px"
+                borderY="1px solid"
+                borderTopColor="gray.100"
+                borderBottomColor="gray.100"
+              >
                 {cardProvider.map((provider) => (
-                  <Flex key={provider.id} as="li" w="100%">
-                    <Flex
+                  <Flex key={provider.id} as="li" alignItems="stretch" w="100%">
+                    <Card
                       as="button"
-                      alignItems="center"
-                      justifyContent="space-between"
+                      variant="outline"
                       w="100%"
-                      h="60px"
-                      p="0 16px"
-                      layerStyle="buttonBackgroundTransition.100"
+                      justifyContent="space-between"
+                      rounded="16px"
                     >
-                      <Text color="gray.600" fontSize="14px" fontWeight="bold">
-                        {provider.name}
-                      </Text>
-                      <Text color="gray.700" fontSize="14px" fontWeight="bold">
-                        {`${card.find(({ cardProvider }) => cardProvider === provider)?.amount.toLocaleString() ?? "（未登録）"}`}
-                      </Text>
-                    </Flex>
+                      <CardBody w="100%" p="8px">
+                        <Box
+                          role="presentation"
+                          w="100%"
+                          bg={provider.color}
+                          rounded="8px"
+                          aspectRatio={1.618 / 1}
+                        />
+                        <Text textStyle="textHeading">{provider.name}</Text>
+                        <Text
+                          color="gray.700"
+                          fontSize="14px"
+                          fontWeight="bold"
+                        >
+                          {`${card.find(({ cardProvider }) => cardProvider === provider)?.amount.toLocaleString() ?? "（未登録）"}`}
+                        </Text>
+                      </CardBody>
+                    </Card>
                   </Flex>
                 ))}
-              </ListContainer>
+              </SimpleGrid>
             </TabPanel>
           </TabPanels>
         </Tabs>

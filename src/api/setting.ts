@@ -15,6 +15,7 @@ export const getCardProvider: () => Promise<
       queries: {
         offset: 0,
         limit: 100,
+        orders: "order",
       },
     })
   ).contents as SettingCardProviderType[];
@@ -37,14 +38,15 @@ export const saveCardProvider: (
 
 export const updateCardProvider: (
   id: string,
-  name: string
-) => Promise<SettingCardProviderType> = async (id: string, name: string) => {
+  content: SettingCardProviderBaseType
+) => Promise<SettingCardProviderType> = async (
+  id: string,
+  content: SettingCardProviderBaseType
+) => {
   const response = (await client.update({
     endpoint: "card_provider",
     contentId: id,
-    content: {
-      name,
-    },
+    content,
   })) as SettingCardProviderType;
 
   return response;
