@@ -31,8 +31,13 @@ const ModalBase: FC<Props> = ({
   <Modal isCentered {...props}>
     <ModalOverlay />
     <ModalContent gap="16px" p="0 16px 16px">
-      <ModalHeader p="16px 0" fontSize="18px" textAlign="center" pos="relative">
-        {!!headerLeftAction.length  && (
+      <ModalHeader
+        p="16px 0"
+        fontSize="16px"
+        pos="relative"
+        textAlign="center"
+      >
+        {!!headerLeftAction.length && (
           <MenuBase
             menu={headerLeftAction}
             m="auto"
@@ -56,7 +61,7 @@ const ModalBase: FC<Props> = ({
         {props.children}
       </ModalBody>
       {footer && (
-        <ModalFooter alignItems="stretch" p={0}>
+        <ModalFooter alignItems="stretch" p={0} fontSize="16px">
           {footer}
         </ModalFooter>
       )}

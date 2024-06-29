@@ -5,4 +5,4 @@ export const GRAPH_COLORS: string[] = [
   "#FFDB9C",
   "#B0F7B1",
   "#FFCBEC",
-];
+] as const;

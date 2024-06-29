@@ -24,7 +24,7 @@ const fonts = {
 };
 const textStyles = {
   textHeading: {
-    color: "gray.500",
+    color: "gray.600",
     fontWeight: "bold",
     fontSize: "12px",
   },

@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { Button, Text } from "@chakra-ui/react";
 import ModalBase from "~/components/Modal/ModalBase";
+import { useSubmitting } from "~/hooks/useSubmitting";
 
 type Props = {
   isOpen: boolean;
@@ -17,6 +18,8 @@ const CardProviderDeleteModal: FC<Props> = ({
   cardDataLength,
   onClick,
 }) => {
+  const isSubmitting = useSubmitting();
+
   return (
     <ModalBase
       isOpen={isOpen}
@@ -25,10 +28,16 @@ const CardProviderDeleteModal: FC<Props> = ({
       heading={`「${name}」の削除`}
       footer={
         <>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" isDisabled={isSubmitting} onClick={onClose}>
             キャンセル
           </Button>
-          <Button colorScheme="red" onClick={onClick}>
+          <Button
+            colorScheme="red"
+            isDisabled={isSubmitting}
+            isLoading={isSubmitting}
+            loadingText="削除"
+            onClick={onClick}
+          >
             削除
           </Button>
         </>

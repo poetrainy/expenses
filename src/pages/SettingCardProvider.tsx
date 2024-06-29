@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   ActionFunctionArgs,
   redirect,
@@ -43,6 +43,7 @@ import SortChildContainer from "~/components/Sort/SortChildContainer";
 import SortParentContainer from "~/components/Sort/SortParentContainer";
 import MenuBase from "~/components/MenuBase";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
+import { useSubmitting } from "~/hooks/useSubmitting";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -125,6 +126,7 @@ const SettingCardProvider: FC = () => {
     typeof loader
   >;
   const submit = useSubmit();
+  const isSubmitting = useSubmitting();
 
   useSetPageContext({ title: "所持クレジットカード", backLink: true });
 
@@ -141,13 +143,20 @@ const SettingCardProvider: FC = () => {
   const [deleteCardProviderData, setDeleteCardProviderData] =
     useState<SettingCardProviderType>();
 
-  const onSaveCardProvider = (name: string) => {
+  useEffect(() => {
+    if (!isSubmitting) {
+      onCloseCardProviderSaveModal();
+      setDeleteCardProviderData(undefined);
+    }
+  }, [isSubmitting, onCloseCardProviderSaveModal]);
+
+  const onSaveCardProvider = (name: string, color: string) => {
     submit(
       {
         intent: "save",
         content: JSON.stringify({
           name,
-          color: GRAPH_COLORS[Math.floor(Math.random() * 6)],
+          color,
           order: cardProvider.length + 1,
         } satisfies SettingCardProviderBaseType),
       },
@@ -155,8 +164,6 @@ const SettingCardProvider: FC = () => {
         method: "POST",
       }
     );
-
-    onCloseCardProviderSaveModal();
   };
 
   const onUpdateCardProvider = (
@@ -189,8 +196,6 @@ const SettingCardProvider: FC = () => {
         method: "POST",
       }
     );
-
-    setDeleteCardProviderData(undefined);
   };
 
   const updateCardProviderOrder = () => {
@@ -231,6 +236,14 @@ const SettingCardProvider: FC = () => {
           onClick={() => updateCardProviderOrder()}
           textStyle="textButton"
           ml="auto"
+          opacity={1}
+          transition="opacity 0.2s"
+          sx={{
+            ...(isSubmitting && {
+              opacity: 0.4,
+              pointerEvents: "none",
+            }),
+          }}
         >
           {sortable ? "保存" : "並べ替え"}
         </Box>
@@ -247,7 +260,19 @@ const SettingCardProvider: FC = () => {
               }
 
               return (
-                <Flex as="li" key={providerId} w="100%">
+                <Flex
+                  as="li"
+                  key={providerId}
+                  w="100%"
+                  opacity={1}
+                  transition="opacity 0.2s"
+                  sx={{
+                    ...(isSubmitting && {
+                      opacity: 0.4,
+                      pointerEvents: "none",
+                    }),
+                  }}
+                >
                   <SortChildContainer id={providerId} sortable={sortable}>
                     <Flex
                       alignItems="center"
@@ -264,7 +289,6 @@ const SettingCardProvider: FC = () => {
                           <Menu>
                             <MenuButton>
                               <Box
-                                display="block"
                                 boxSize="24px"
                                 bg={provider.color}
                                 rounded="6px"
@@ -350,15 +374,21 @@ const SettingCardProvider: FC = () => {
             p="8px 16px"
             fontSize="14px"
             fontWeight="bold"
-            opacity="1"
+            opacity={1}
             transition="opacity 0.2s"
             _hover={{ opacity: 0.8 }}
             _active={{ opacity: 0.6 }}
             _focusVisible={{ opacity: 0.6 }}
+            sx={{
+              ...(isSubmitting && {
+                opacity: 0.4,
+                pointerEvents: "none",
+              }),
+            }}
           >
             <AddIcon boxSize="16px" color="gray.700" />
             <Text as="span" color="gray.600">
-              新しいクレジットカード名を登録
+              クレジットカード登録
             </Text>
           </Center>
         )}
@@ -376,7 +406,7 @@ const SettingCardProvider: FC = () => {
       <CardProviderSaveModal
         isOpen={isOpenCardProviderSaveModal}
         onClose={onCloseCardProviderSaveModal}
-        onClick={(value) => onSaveCardProvider(value)}
+        onClick={(name, color) => onSaveCardProvider(name, color)}
       />
     </>
   );
