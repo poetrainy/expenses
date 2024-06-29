@@ -8,15 +8,8 @@ import {
 import {
   Box,
   Center,
-  Editable,
-  EditableInput,
-  EditablePreview,
   Flex,
   Icon,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Text,
   VStack,
   useDisclosure,
@@ -36,9 +29,8 @@ import {
 } from "~/types/Settings";
 import CardProviderDeleteModal from "~/components/Modal/CardProviderDeleteModal";
 import { getExpensesAllCard } from "~/api/expenses";
-import CardProviderSaveModal from "~/components/Modal/CardProviderSaveModal";
+import CardProviderModal from "~/components/Modal/CardProviderModal";
 import { useSetPageContext } from "~/context/usePageContext";
-import { GRAPH_COLORS } from "~/constants/colors";
 import SortChildContainer from "~/components/Sort/SortChildContainer";
 import SortParentContainer from "~/components/Sort/SortParentContainer";
 import MenuBase from "~/components/MenuBase";
@@ -136,6 +128,8 @@ const SettingCardProvider: FC = () => {
     onOpen: onOpenCardProviderSaveModal,
     onClose: onCloseCardProviderSaveModal,
   } = useDisclosure();
+  const [updateCardProviderData, setUpdateCardProviderData] =
+    useState<SettingCardProviderType>();
   const [deleteCardProviderData, setDeleteCardProviderData] =
     useState<SettingCardProviderType>();
 
@@ -276,74 +270,32 @@ const SettingCardProvider: FC = () => {
                       w="100%"
                       h="56px"
                       p="0 16px"
-                      fontSize="16px"
                     >
-                      <Flex alignItems="center" gap="10px">
+                      <Flex alignItems="center" gap="8px">
                         {sortable ? (
-                          <Icon as={DragHandleIcon} color="gray.500" />
+                          <Icon
+                            as={DragHandleIcon}
+                            boxSize="20px"
+                            color="gray.500"
+                          />
                         ) : (
-                          <Menu>
-                            <MenuButton>
-                              <Box
-                                boxSize="24px"
-                                bg={provider.color}
-                                rounded="6px"
-                                _hover={{ cursor: "pointer" }}
-                              />
-                            </MenuButton>
-                            <MenuList
-                              display="flex"
-                              gap="8px"
-                              minW="max-content"
-                              p="12px"
-                              rounded="16px"
-                              overflow="hidden"
-                            >
-                              {GRAPH_COLORS.map((color) => (
-                                <MenuItem
-                                  key={color}
-                                  onClick={() =>
-                                    onUpdateCardProvider(provider.id, {
-                                      name: provider.name,
-                                      order: provider.order,
-                                      color,
-                                    })
-                                  }
-                                  boxSize="28px"
-                                  minW="28px"
-                                  bg={color}
-                                  p={0}
-                                  rounded="8px"
-                                  border="2px solid white"
-                                  sx={{
-                                    ...(provider.color === color && {
-                                      outline: "3px solid",
-                                      outlineColor: "blue.100",
-                                    }),
-                                  }}
-                                />
-                              ))}
-                            </MenuList>
-                          </Menu>
+                          <Box
+                            boxSize="20px"
+                            bg={provider.color}
+                            rounded="6px"
+                          />
                         )}
-                        <Editable
-                          defaultValue={provider.name}
-                          isDisabled={sortable}
-                          placeholder="e.g. 楽天カード"
-                          onSubmit={(value) =>
-                            onUpdateCardProvider(providerId, {
-                              ...provider,
-                              name: value,
-                            })
-                          }
-                        >
-                          <EditablePreview p="8px 0" />
-                          <EditableInput w="100%" h="32px" />
-                        </Editable>
+                        <Text as="span">{provider.name}</Text>
                       </Flex>
                       {!sortable && (
                         <MenuBase
                           menu={[
+                            {
+                              variant: "normal",
+                              label: "編集",
+                              onClick: () =>
+                                setUpdateCardProviderData(provider),
+                            },
                             {
                               variant: "danger",
                               label: "削除",
@@ -389,6 +341,30 @@ const SettingCardProvider: FC = () => {
           </Center>
         )}
       </VStack>
+      <CardProviderModal
+        key="new"
+        variant="new"
+        isOpen={isOpenCardProviderSaveModal}
+        onClose={onCloseCardProviderSaveModal}
+        onClick={(name: string, color: string) =>
+          onSaveCardProvider(name, color)
+        }
+      />
+      <CardProviderModal
+        key="edit"
+        variant="edit"
+        isOpen={!!updateCardProviderData}
+        onClose={() => setUpdateCardProviderData(undefined)}
+        onClick={(name: string, color: string) =>
+          updateCardProviderData &&
+          onUpdateCardProvider(updateCardProviderData.id, {
+            name,
+            color,
+            order: updateCardProviderData?.order,
+          })
+        }
+        cardProvider={updateCardProviderData}
+      />
       <CardProviderDeleteModal
         isOpen={!!deleteCardProviderData}
         onClose={() => setDeleteCardProviderData(undefined)}
@@ -398,11 +374,6 @@ const SettingCardProvider: FC = () => {
             ?.length ?? 0
         }
         onClick={() => onDeleteCardProvider()}
-      />
-      <CardProviderSaveModal
-        isOpen={isOpenCardProviderSaveModal}
-        onClose={onCloseCardProviderSaveModal}
-        onClick={(name, color) => onSaveCardProvider(name, color)}
       />
     </>
   );

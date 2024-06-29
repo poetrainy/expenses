@@ -3,32 +3,46 @@ import { Box, Button, Flex, Input, Text, VStack } from "@chakra-ui/react";
 import ModalBase from "~/components/Modal/ModalBase";
 import { GRAPH_COLORS } from "~/constants/colors";
 import { useSubmitting } from "~/hooks/useSubmitting";
+import { SettingCardProviderType } from "~/types/Settings";
 
 type Props = {
+  variant: "new" | "edit";
   isOpen: boolean;
   onClose: () => void;
   onClick: (name: string, color: string) => void;
+  cardProvider?: SettingCardProviderType;
 };
 
-const CardProviderSaveModal: FC<Props> = ({ isOpen, onClose, onClick }) => {
+const CardProviderSaveModal: FC<Props> = ({
+  variant,
+  isOpen,
+  onClose,
+  onClick,
+  cardProvider,
+}) => {
   const isSubmitting = useSubmitting();
+  const [submitCount, setSubmitCount] = useState(0);
 
-  const [name, setName] = useState<string>("");
-  const [color, setColor] = useState<string>(GRAPH_COLORS[0]);
+  const [name, setName] = useState<string>(cardProvider?.name ?? "");
+  const [color, setColor] = useState<string>(
+    cardProvider?.color ?? GRAPH_COLORS[0]
+  );
 
   useEffect(() => {
-    if (!isSubmitting) {
+    if (!isSubmitting && !!submitCount) {
+      onClose();
       setName("");
       setColor(GRAPH_COLORS[0]);
+      setSubmitCount(0);
     }
-  }, [isSubmitting]);
+  }, [isSubmitting, submitCount, onClose]);
 
   return (
     <ModalBase
       isOpen={isOpen}
       onClose={onClose}
       size="xs"
-      heading="クレジットカード登録"
+      heading={`クレジットカード${variant === "new" ? "登録" : "編集"}`}
       footer={
         <>
           <Button
@@ -43,11 +57,14 @@ const CardProviderSaveModal: FC<Props> = ({ isOpen, onClose, onClick }) => {
             type="button"
             isDisabled={!name.length || isSubmitting}
             isLoading={isSubmitting}
-            loadingText="登録"
-            onClick={() => onClick(name, color)}
+            loadingText={variant === "new" ? "登録" : "保存"}
+            onClick={() => {
+              onClick(name, color);
+              setSubmitCount((p) => p + 1);
+            }}
             fontSize="14px"
           >
-            登録
+            {variant === "new" ? "登録" : "保存"}
           </Button>
         </>
       }
