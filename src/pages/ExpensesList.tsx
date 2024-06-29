@@ -157,7 +157,7 @@ const ExpensesList: FC = () => {
             }}
           >
             <Tab fontSize="14px">現金</Tab>
-            <Tab fontSize="14px">カード</Tab>
+            <Tab fontSize="14px">電子決済</Tab>
           </TabList>
           <TabPanels>
             <TabPanel p={0}>

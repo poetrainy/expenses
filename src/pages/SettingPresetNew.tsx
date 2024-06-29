@@ -31,7 +31,7 @@ const SettingPresetNew: FC = () => {
   const { isSubmittingAndLoading } = useSubmitting();
   const submit = useSubmit();
 
-  useSetPageContext({ title: "プリセット", backLink: true });
+  useSetPageContext({ title: "プリセット登録", backLink: true });
 
   const [submitCount, setSubmitCount] = useState(0);
   const [memo, setMemo] = useState("");
@@ -59,7 +59,7 @@ const SettingPresetNew: FC = () => {
         </Text>
         <Input
           value={memo}
-          placeholder="e.g. 楽天カード"
+          placeholder="e.g. ExamplePay"
           onChange={(e) => setMemo(e.target.value)}
           h="56px"
           bg="white"

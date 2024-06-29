@@ -43,7 +43,7 @@ const SettingCardProvider: FC = () => {
   const submit = useSubmit();
   const { isSubmittingAndLoading } = useSubmitting();
 
-  useSetPageContext({ title: "クレジットカード登録", backLink: true });
+  useSetPageContext({ title: "電子決済登録", backLink: true });
 
   const [submitCount, setSubmitCount] = useState(0);
   const [name, setName] = useState("");
@@ -68,11 +68,11 @@ const SettingCardProvider: FC = () => {
     <VStack alignItems="stretch" gap="24px" p={0}>
       <VStack alignItems="stretch" gap="8px" p={0}>
         <Text as="h2" textStyle="textHeading">
-          クレジットカード会社名
+          決済サービス名称
         </Text>
         <Input
           value={name}
-          placeholder="e.g. 楽天カード"
+          placeholder="e.g. ExamplePay"
           onChange={(e) => setName(e.target.value)}
           h="56px"
           bg="white"

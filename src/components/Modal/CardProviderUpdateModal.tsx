@@ -20,7 +20,7 @@ const CardProviderUpdateModal: FC<Props> = ({
   prevColor,
 }) => {
   const { isSubmittingAndLoading } = useSubmitting();
-  
+
   const [submitCount, setSubmitCount] = useState(0);
 
   const modalClose = () => {
@@ -47,7 +47,7 @@ const CardProviderUpdateModal: FC<Props> = ({
       isOpen={isOpen}
       onClose={modalClose}
       size="xs"
-      heading="クレジットカード編集"
+      heading="電子決済編集"
       footer={
         <>
           <Button
@@ -76,10 +76,10 @@ const CardProviderUpdateModal: FC<Props> = ({
     >
       <VStack alignItems="stretch" gap="16px">
         <VStack alignItems="stretch" gap="4px">
-          <Text textStyle="textHeading">クレジットカード名</Text>
+          <Text textStyle="textHeading">決済サービス名称</Text>
           <Input
             defaultValue={prevName}
-            placeholder="e.g. 楽天カード"
+            placeholder="e.g. ExamplePay"
             isDisabled={isSubmittingAndLoading}
             onChange={(e) => setName(e.target.value)}
           />

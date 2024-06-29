@@ -18,7 +18,7 @@ const SETTING_LINKS = [
         path: "presets",
       },
       {
-        label: "所持クレジットカード",
+        label: "電子決済リスト",
         path: "card",
       },
     ],
@@ -34,41 +34,39 @@ const Settings: FC = () => {
   useSetPageContext({ title: "設定" });
 
   return (
-    <>
-      <VStack
-        as="ul"
-        alignItems="stretch"
-        gap="16px"
-        m="-24px -16px"
-        p="24px 16px"
-      >
-        {SETTING_LINKS.map(({ heading, items }) => (
-          <VStack as="li" key={heading} alignItems="stretch" gap="6px" p={0}>
-            <Text textStyle="textHeading">{heading}</Text>
-            <ListContainer>
-              {items.map(({ label, path }) => (
-                <Flex key={label} as="li" w="100%">
-                  <ChakraUILink
-                    as={RouterLink}
-                    to={path}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    w="100%"
-                    h="56px"
-                    p="0 16px"
-                    layerStyle="buttonBackgroundTransition.100"
-                  >
-                    <Text as="span">{label}</Text>
-                    <ChevronRightIcon color="gray.600" boxSize="24px" />
-                  </ChakraUILink>
-                </Flex>
-              ))}
-            </ListContainer>
-          </VStack>
-        ))}
-      </VStack>
-    </>
+    <VStack
+      as="ul"
+      alignItems="stretch"
+      gap="16px"
+      m="-24px -16px"
+      p="24px 16px"
+    >
+      {SETTING_LINKS.map(({ heading, items }) => (
+        <VStack as="li" key={heading} alignItems="stretch" gap="6px" p={0}>
+          <Text textStyle="textHeading">{heading}</Text>
+          <ListContainer>
+            {items.map(({ label, path }) => (
+              <Flex key={label} as="li" w="100%">
+                <ChakraUILink
+                  as={RouterLink}
+                  to={path}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  w="100%"
+                  h="56px"
+                  p="0 16px"
+                  layerStyle="buttonBackgroundTransition.100"
+                >
+                  <Text as="span">{label}</Text>
+                  <ChevronRightIcon color="gray.600" boxSize="24px" />
+                </ChakraUILink>
+              </Flex>
+            ))}
+          </ListContainer>
+        </VStack>
+      ))}
+    </VStack>
   );
 };
 

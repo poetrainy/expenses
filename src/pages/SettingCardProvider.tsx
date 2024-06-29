@@ -116,7 +116,7 @@ const SettingCardProvider: FC = () => {
   const submit = useSubmit();
   const { isSubmittingAndLoading } = useSubmitting();
 
-  useSetPageContext({ title: "所持クレジットカード", backLink: true });
+  useSetPageContext({ title: "電子決済リスト", backLink: true });
 
   const [sortable, setSortable] = useState<boolean>(false);
   const [cardProviderId, setCardProviderId] = useState(
@@ -316,7 +316,7 @@ const SettingCardProvider: FC = () => {
           >
             <AddIcon boxSize="16px" color="gray.700" />
             <Text as="span" color="gray.600">
-              クレジットカード登録
+              電子決済登録
             </Text>
           </ChakraUILink>
         )}
