@@ -17,22 +17,22 @@ import "~/styles/index.css";
 import SettingCashless, {
   action as actionSettingCashless,
   loader as loaderSettingCashless,
-} from "~/pages/SettingCashless";
+} from "~/pages/Settings/Cashless";
 import SettingCashlessNew, {
   action as actionSettingCashlessNew,
   loader as loaderSettingCashlessNew,
-} from "~/pages/SettingCashlessNew";
+} from "~/pages/Settings/CashlessNew";
 import SettingPresets, {
   action as actionSettingPresets,
   loader as loaderSettingPresets,
-} from "~/pages/SettingPresets";
+} from "~/pages/Settings/Presets";
 import SettingPresetNew, {
   action as actionSettingPresetNew,
-} from "~/pages/SettingPresetNew";
+} from "~/pages/Settings/PresetNew";
 import SettingTargetAmount, {
   action as actionSettingTargetAmount,
   loader as loaderSettingTargetAmount,
-} from "~/pages/SettingTargetAmount";
+} from "~/pages/Settings/TargetAmount";
 
 const App = () => {
   const router = createBrowserRouter(
