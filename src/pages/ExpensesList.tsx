@@ -136,8 +136,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const loader = async ({ params }: { params: Params<string> }) => {
-  const year = params.year!;
-  const month = params.month!;
+  const now = new Date();
+  const year = params.year ?? String(now.getFullYear());
+  const month = params.month ?? String(now.getMonth() + 1);
 
   const filteredCash = await getExpensesFilteredCash(
     year,

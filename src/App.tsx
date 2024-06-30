@@ -10,7 +10,6 @@ import ExpensesList, {
   loader as loaderExpensesList,
 } from "~/pages/ExpensesList";
 import Root, { loader as loaderRoot } from "~/pages/Root";
-import { getPath } from "~/libs/getPath";
 import Statistics, { loader as loaderStatistics } from "~/pages/Statistics";
 import Settings, { loader as loaderSettings } from "~/pages/Settings";
 import "~/styles/index.css";
@@ -41,12 +40,13 @@ const App = () => {
         <Route
           path=""
           element={<div></div>}
-          loader={() => redirect(getPath())}
+          loader={() => redirect("/expenses")}
         />
         <Route
           path="expenses"
-          element={<div></div>}
-          loader={() => redirect(getPath())}
+          element={<ExpensesList />}
+          action={actionExpensesList}
+          loader={loaderExpensesList}
         />
         <Route
           path="expenses/:year/:month"
