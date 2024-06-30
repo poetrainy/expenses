@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import ModalBase from "~/components/Modal/ModalBase";
 import PresetRegisterModal from "~/components/Modal/PresetRegisterModal";
+import ExpensesCashDeleteModal from "~/components/Modal/ExpensesCashDeleteModal";
 import { ExpensesCash, ExpensesCashType } from "~/types/Expenses";
 import { useSubmitting } from "~/hooks/useSubmitting";
 
@@ -77,6 +78,7 @@ const OperationExpensesModal: FC<Props> = ({
 }) => {
   const { isSubmittingAndLoading } = useSubmitting();
   const [submitCount, setSubmitCount] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [date, setDate] = useState<string>(expenses?.date.split("T")[0] ?? "");
   const [type, setType] = useState<ExpensesCash>(
@@ -91,6 +93,12 @@ const OperationExpensesModal: FC<Props> = ({
     isOpen: isOpenPresetRegisterModal,
     onOpen: onOpenPresetRegisterModal,
     onClose: onClosePresetRegisterModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenExpensesCashDeleteModal,
+    onOpen: onOpenExpensesCashDeleteModal,
+    onClose: onCloseExpensesCashDeleteModal,
   } = useDisclosure();
 
   useEffect(() => {
@@ -110,7 +118,7 @@ const OperationExpensesModal: FC<Props> = ({
         isOpen={isOpen}
         onClose={onClose}
         size={["full", "3xl"]}
-        heading={`収支を${ACTION_MAP[variant]}する`}
+        heading={`収支を${ACTION_MAP[variant]}`}
         headerLeftAction={
           variant === "edit"
             ? [
@@ -119,28 +127,28 @@ const OperationExpensesModal: FC<Props> = ({
                   label: "プリセットに登録",
                   onClick: () => onOpenPresetRegisterModal(),
                 },
-                {
-                  variant: "danger",
-                  label: "この記録を削除",
-                  onClick: () => {
-                    onDelete?.();
-                    setSubmitCount((p) => p + 1);
-                  },
-                },
               ]
             : undefined
         }
         footer={
-          <VStack gap="8px" w="100%" maxW="600px" m="auto" p="0 0 16px">
+          <VStack
+            alignItems="stretch"
+            gap="8px"
+            w="100%"
+            maxW="600px"
+            m="auto"
+            p="0 0 16px"
+          >
             <Button
-              w="100%"
               type="button"
               onClick={() => {
                 setSubmitCount((p) => p + 1);
                 onSave?.(`${date}`, type, memo, Number(result));
               }}
               isLoading={
-                (isSubmittingAndLoading || isSubmitting) && !!submitCount
+                (isSubmittingAndLoading || isSubmitting) &&
+                !!submitCount &&
+                !isDeleting
               }
               loadingText={`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
               isDisabled={
@@ -154,6 +162,19 @@ const OperationExpensesModal: FC<Props> = ({
             >
               {`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
             </Button>
+            {onDelete && (
+              <Button
+                variant="ghost"
+                colorScheme="red"
+                isDisabled={isSubmittingAndLoading || isSubmitting}
+                onClick={() => onOpenExpensesCashDeleteModal()}
+                h="fit-content"
+                p="8px 16px"
+                fontSize="14px"
+              >
+                記録を削除する
+              </Button>
+            )}
           </VStack>
         }
       >
@@ -276,6 +297,15 @@ const OperationExpensesModal: FC<Props> = ({
           onClick={onSavePreset}
         />
       )}
+      <ExpensesCashDeleteModal
+        isOpen={isOpenExpensesCashDeleteModal}
+        onClose={onCloseExpensesCashDeleteModal}
+        onClick={() => {
+          onDelete?.();
+          setIsDeleting(true);
+          setSubmitCount((p) => p + 1);
+        }}
+      />
     </>
   );
 };

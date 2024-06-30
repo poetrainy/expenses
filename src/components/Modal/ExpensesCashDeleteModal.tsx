@@ -24,7 +24,7 @@ const ExpensesCashDeleteModal: FC<Props> = ({ isOpen, onClose, onClick }) => {
       isOpen={isOpen}
       onClose={onClose}
       size="xs"
-      heading="削除"
+      heading="記録を削除"
       footer={
         <>
           <Button
