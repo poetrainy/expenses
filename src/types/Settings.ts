@@ -1,23 +1,22 @@
 import { MicroCMSType } from "~/types/MicroCMS";
 
-export type SettingCardProviderBaseType = {
+export type CashlessTargetBaseType = {
   name: string;
   color: string;
   order: number;
 };
 
-export type SettingCardProviderType = MicroCMSType &
-  SettingCardProviderBaseType;
+export type CashlessTargetType = MicroCMSType & CashlessTargetBaseType;
 
-export type SettingCommonBaseType = {
+export type CommonBaseType = {
   targetAmount: number;
 };
 
-export type SettingCommonType = MicroCMSType & SettingCommonBaseType;
+export type CommonType = MicroCMSType & CommonBaseType;
 
-export type SettingPresetBaseType = {
+export type PresetBaseType = {
   memo: string;
   amount: number;
 };
 
-export type SettingPresetType = MicroCMSType & SettingPresetBaseType;
+export type PresetType = MicroCMSType & PresetBaseType;

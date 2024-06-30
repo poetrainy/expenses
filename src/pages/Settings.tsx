@@ -19,7 +19,7 @@ const SETTING_LINKS = [
       },
       {
         label: "電子決済リスト",
-        path: "card",
+        path: "cashless",
       },
     ],
   },

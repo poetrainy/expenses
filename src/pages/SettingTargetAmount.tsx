@@ -6,19 +6,19 @@ import {
   useLoaderData,
   useSubmit,
 } from "react-router-dom";
-import { getTargetAmount, updateCommon } from "~/api/setting";
+import { getTargetAmount, updateCommon } from "~/api/common";
 import AmountInputContainer from "~/components/AmountInputContainer";
 import { useSetPageContext } from "~/context/usePageContext";
 import { useSubmitting } from "~/hooks/useSubmitting";
 import { LoaderData } from "~/types";
-import { SettingCommonBaseType } from "~/types/Settings";
+import { CommonBaseType } from "~/types/Settings";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const content = JSON.parse(
     formData.get("content") as string
-  ) as SettingCommonBaseType;
+  ) as CommonBaseType;
 
   try {
     await updateCommon(content);
@@ -54,7 +54,7 @@ const SettingTargetAmount: FC = () => {
       {
         content: JSON.stringify({
           targetAmount: Number(updateTargetAmount),
-        } satisfies SettingCommonBaseType),
+        } satisfies CommonBaseType),
       },
       {
         method: "POST",

@@ -45,7 +45,7 @@ const Header: FC<Props> = ({ archives }) => {
 
   const onExpensesSave = async (
     date: string,
-    type: ExpensesCash,
+    category: ExpensesCash,
     memo: string,
     amount: number
   ) => {
@@ -54,7 +54,7 @@ const Header: FC<Props> = ({ archives }) => {
     try {
       await saveExpensesCash({
         date,
-        type: [type],
+        category: [category],
         memo,
         amount,
       } satisfies ExpensesCashBaseType);

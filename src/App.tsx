@@ -14,20 +14,20 @@ import { getPath } from "~/libs/getPath";
 import Statistics, { loader as loaderStatistics } from "~/pages/Statistics";
 import Settings, { loader as loaderSettings } from "~/pages/Settings";
 import "~/styles/index.css";
-import SettingCardProvider, {
-  action as actionSettingCardProvider,
-  loader as loaderSettingCardProvider,
-} from "~/pages/SettingCardProvider";
-import SettingCardProviderNew, {
-  action as actionSettingCardProviderNew,
-  loader as loaderSettingCardProviderNew,
-} from "~/pages/SettingCardProviderNew";
+import SettingCashless, {
+  action as actionSettingCashless,
+  loader as loaderSettingCashless,
+} from "~/pages/SettingCashless";
+import SettingCashlessNew, {
+  action as actionSettingCashlessNew,
+  loader as loaderSettingCashlessNew,
+} from "~/pages/SettingCashlessNew";
 import SettingPresets, {
   action as actionSettingPresets,
   loader as loaderSettingPresets,
 } from "~/pages/SettingPresets";
 import SettingPresetNew, {
-  action as actionSettingPresetNew
+  action as actionSettingPresetNew,
 } from "~/pages/SettingPresetNew";
 import SettingTargetAmount, {
   action as actionSettingTargetAmount,
@@ -61,16 +61,16 @@ const App = () => {
         />
         <Route path="settings" element={<Settings />} loader={loaderSettings} />
         <Route
-          path="settings/card"
-          element={<SettingCardProvider />}
-          action={actionSettingCardProvider}
-          loader={loaderSettingCardProvider}
+          path="settings/cashless"
+          element={<SettingCashless />}
+          action={actionSettingCashless}
+          loader={loaderSettingCashless}
         />
         <Route
-          path="settings/card/new"
-          element={<SettingCardProviderNew />}
-          action={actionSettingCardProviderNew}
-          loader={loaderSettingCardProviderNew}
+          path="settings/cashless/new"
+          element={<SettingCashlessNew />}
+          action={actionSettingCashlessNew}
+          loader={loaderSettingCashlessNew}
         />
         <Route
           path="settings/presets"

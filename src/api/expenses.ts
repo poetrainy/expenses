@@ -1,8 +1,8 @@
 import { WriteApiRequestResult } from "microcms-js-sdk";
 import { client } from "~/libs/client";
 import {
-  ExpensesCardSaveType,
-  ExpensesCardType,
+  ExpensesCashlessSaveType,
+  ExpensesCashlessType,
   ExpensesCashBaseType,
   ExpensesCashType,
 } from "~/types/Expenses";
@@ -85,70 +85,72 @@ export const deleteExpensesCash = async (id: string) => {
   });
 };
 
-export const getExpensesAllCard: () => Promise<
-  ExpensesCardType[]
+export const getExpensesAllCashless: () => Promise<
+  ExpensesCashlessType[]
 > = async () => {
   const response = (
     await client.get({
-      endpoint: "card",
+      endpoint: "cashless",
       queries: {
         offset: 0,
         limit: 100,
       },
     })
-  ).contents as ExpensesCardType[];
+  ).contents as ExpensesCashlessType[];
 
   return response;
 };
 
-export const getExpensesFilteredCard: (
+export const getExpensesFilteredCashless: (
   year: string,
   month: string
-) => Promise<ExpensesCardType[]> = async (year: string, month: string) => {
+) => Promise<ExpensesCashlessType[]> = async (year: string, month: string) => {
   const response = (
     await client.get({
-      endpoint: "card",
+      endpoint: "cashless",
       queries: {
         offset: 0,
         limit: 100,
         filters: `date[begins_with]${year}-${month}`,
       },
     })
-  ).contents as ExpensesCardType[];
+  ).contents as ExpensesCashlessType[];
 
   return response;
 };
 
-export const getExpensesCard: (
+export const getExpensesCashless: (
   id: string
-) => Promise<ExpensesCardType> = async (id: string) => {
+) => Promise<ExpensesCashlessType> = async (id: string) => {
   const response = (await client.get({
-    endpoint: `card/${id}`,
-  })) as ExpensesCardType;
+    endpoint: `cashless/${id}`,
+  })) as ExpensesCashlessType;
 
   return response;
 };
 
-export const saveExpensesCard: (
-  content: ExpensesCardSaveType
-) => Promise<WriteApiRequestResult> = async (content: ExpensesCardSaveType) => {
+export const saveExpensesCashless: (
+  content: ExpensesCashlessSaveType
+) => Promise<WriteApiRequestResult> = async (
+  content: ExpensesCashlessSaveType
+) => {
   const response = await client.create({
-    endpoint: "card",
+    endpoint: "cashless",
     content,
   });
 
   return response;
 };
 
-export const updateExpensesCard: (
+export const updateExpensesCashless: (
   id: string,
-  content: ExpensesCardSaveType
+  content: ExpensesCashlessSaveType
 ) => Promise<WriteApiRequestResult> = async (
   id: string,
-  content: ExpensesCardSaveType
+  content: ExpensesCashlessSaveType
 ) => {
   const response = await client.update({
-    endpoint: "card",
+    endpoint: "cashless",
     contentId: id,
     content,
   });
@@ -156,9 +158,9 @@ export const updateExpensesCard: (
   return response;
 };
 
-export const deleteExpensesCard = async (id: string) => {
+export const deleteExpensesCashless = async (id: string) => {
   await client.delete({
-    endpoint: "card",
+    endpoint: "cashless",
     contentId: id,
   });
 };

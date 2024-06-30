@@ -15,22 +15,19 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import {
-  deleteCardProvider,
-  getCardProvider,
-  saveCardProvider,
-  updateCardProvider,
-} from "~/api/setting";
+  deleteCashless,
+  getCashlessTarget,
+  saveCashlessTarget,
+  updateCashlessTarget,
+} from "~/api/cashless";
 import { LoaderData } from "~/types";
 import ListContainer from "~/components/ListContainer";
 import { AddIcon } from "@chakra-ui/icons";
-import {
-  SettingCardProviderBaseType,
-  SettingCardProviderType,
-} from "~/types/Settings";
-import { getExpensesAllCard } from "~/api/expenses";
+import { CashlessTargetBaseType, CashlessTargetType } from "~/types/Settings";
+import { getExpensesAllCashless } from "~/api/expenses";
 import { useSetPageContext } from "~/context/usePageContext";
-import CardProviderDeleteModal from "~/components/Modal/CardProviderDeleteModal";
-import CardProviderUpdateModal from "~/components/Modal/CardProviderUpdateModal";
+import CashlessDeleteModal from "~/components/Modal/CashlessDeleteModal";
+import CashlessUpdateModal from "~/components/Modal/CashlessUpdateModal";
 import SortChildContainer from "~/components/Sort/SortChildContainer";
 import SortParentContainer from "~/components/Sort/SortParentContainer";
 import MenuBase from "~/components/MenuBase";
@@ -46,12 +43,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     case "save": {
       const content = JSON.parse(
         formData.get("content") as string
-      ) as SettingCardProviderBaseType;
+      ) as CashlessTargetBaseType;
 
       try {
-        await saveCardProvider(content);
+        await saveCashlessTarget(content);
 
-        return redirect("/settings/card");
+        return redirect("/settings/cashless");
       } catch (e) {
         console.error(e);
 
@@ -63,12 +60,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const id = formData.get("id") as string;
       const content = JSON.parse(
         formData.get("content") as string
-      ) as SettingCardProviderBaseType;
+      ) as CashlessTargetBaseType;
 
       try {
-        await updateCardProvider(id, content);
+        await updateCashlessTarget(id, content);
 
-        return redirect("/settings/card");
+        return redirect("/settings/cashless");
       } catch (e) {
         console.error(e);
 
@@ -80,9 +77,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const id = formData.get("id") as string;
 
       try {
-        await deleteCardProvider(id);
+        await deleteCashless(id);
 
-        return redirect("/settings/card");
+        return redirect("/settings/cashless");
       } catch (e) {
         console.error(e);
 
@@ -94,23 +91,25 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const loader = async () => {
-  const cardProvider = await getCardProvider();
+  const cashlessTarget = await getCashlessTarget();
 
-  const allCard = await getExpensesAllCard();
-  const cardProviderId = cardProvider.map(({ id }) => id);
-  const cardDataLength = cardProviderId.map((id) => {
+  const allCashless = await getExpensesAllCashless();
+  const cashlessTargetId = cashlessTarget.map(({ id }) => id);
+  const cashlessDataLength: {
+    id: string;
+    length: number;
+  }[] = cashlessTargetId.map((id) => {
     return {
       id,
-      length: allCard.filter(({ cardProvider }) => cardProvider.id === id)
-        .length,
+      length: allCashless.filter(({ target }) => target.id === id).length,
     };
   });
 
-  return { cardProvider, cardDataLength };
+  return { cashlessTarget, cashlessDataLength };
 };
 
-const SettingCardProvider: FC = () => {
-  const { cardProvider, cardDataLength } = useLoaderData() as LoaderData<
+const Cashless: FC = () => {
+  const { cashlessTarget, cashlessDataLength } = useLoaderData() as LoaderData<
     typeof loader
   >;
   const submit = useSubmit();
@@ -119,25 +118,22 @@ const SettingCardProvider: FC = () => {
   useSetPageContext({ title: "電子決済リスト", backLink: true });
 
   const [sortable, setSortable] = useState<boolean>(false);
-  const [cardProviderId, setCardProviderId] = useState(
-    cardProvider.map(({ id }) => id)
+  const [cashlessTargetId, setCashlessTargetId] = useState(
+    cashlessTarget.map(({ id }) => id)
   );
 
-  const [updateCardProviderData, setUpdateCardProviderData] =
-    useState<SettingCardProviderType>();
-  const [deleteCardProviderData, setDeleteCardProviderData] =
-    useState<SettingCardProviderType>();
+  const [updateCashlessData, setUpdateCashlessData] =
+    useState<CashlessTargetType>();
+  const [deleteCashlessData, setDeleteCashlessData] =
+    useState<CashlessTargetType>();
 
   useEffect(() => {
     if (!isSubmittingAndLoading) {
-      setDeleteCardProviderData(undefined);
+      setDeleteCashlessData(undefined);
     }
   }, [isSubmittingAndLoading]);
 
-  const onUpdateCardProvider = (
-    id: string,
-    content: SettingCardProviderBaseType
-  ) => {
+  const onUpdateCashless = (id: string, content: CashlessTargetBaseType) => {
     submit(
       {
         intent: "update",
@@ -150,15 +146,15 @@ const SettingCardProvider: FC = () => {
     );
   };
 
-  const onDeleteCardProvider = () => {
-    if (!deleteCardProviderData) {
+  const onDeleteCashless = () => {
+    if (!deleteCashlessData) {
       return;
     }
 
     submit(
       {
         intent: "delete",
-        id: deleteCardProviderData.id,
+        id: deleteCashlessData.id,
       },
       {
         method: "POST",
@@ -166,20 +162,20 @@ const SettingCardProvider: FC = () => {
     );
   };
 
-  const updateCardProviderOrder = () => {
+  const updateCashlessOrder = () => {
     if (sortable) {
       const newArray = (
-        cardProviderId
+        cashlessTargetId
           .map((str, i) => {
             return {
-              prev: cardProvider.find(({ id }) => id === str)!,
+              prev: cashlessTarget.find(({ id }) => id === str)!,
               newOrder: i + 1,
             };
           })
           .filter(
             ({ prev, newOrder }) => !!prev && newOrder !== prev.order
           ) as {
-          prev: SettingCardProviderType;
+          prev: CashlessTargetType;
           newOrder: number;
         }[]
       ).map(({ prev, newOrder }) => {
@@ -189,7 +185,7 @@ const SettingCardProvider: FC = () => {
         };
       });
       newArray.forEach(({ id, name, color, order }) =>
-        onUpdateCardProvider(id, { name, color, order })
+        onUpdateCashless(id, { name, color, order })
       );
     }
 
@@ -201,7 +197,7 @@ const SettingCardProvider: FC = () => {
       <VStack alignItems="stretch" gap="8px" p={0}>
         <Box
           as="button"
-          onClick={() => updateCardProviderOrder()}
+          onClick={() => updateCashlessOrder()}
           textStyle="textButton"
           ml="auto"
           opacity={1}
@@ -216,13 +212,13 @@ const SettingCardProvider: FC = () => {
           {sortable ? "保存" : "並べ替え"}
         </Box>
         <SortParentContainer
-          id="cardProvider"
-          items={cardProvider}
-          onChange={(id: string[]) => setCardProviderId(id)}
+          id="cashless"
+          items={cashlessTarget}
+          onChange={(id: string[]) => setCashlessTargetId(id)}
         >
           <ListContainer>
-            {cardProviderId.map((providerId) => {
-              const provider = cardProvider.find(({ id }) => id === providerId);
+            {cashlessTargetId.map((item) => {
+              const provider = cashlessTarget.find(({ id }) => id === item);
               if (!provider) {
                 return <></>;
               }
@@ -230,7 +226,7 @@ const SettingCardProvider: FC = () => {
               return (
                 <Flex
                   as="li"
-                  key={providerId}
+                  key={item}
                   w="100%"
                   opacity={1}
                   transition="opacity 0.2s"
@@ -241,7 +237,7 @@ const SettingCardProvider: FC = () => {
                     }),
                   }}
                 >
-                  <SortChildContainer id={providerId} sortable={sortable}>
+                  <SortChildContainer id={item} sortable={sortable}>
                     <Flex
                       alignItems="center"
                       justifyContent="space-between"
@@ -271,14 +267,12 @@ const SettingCardProvider: FC = () => {
                             {
                               variant: "normal",
                               label: "編集",
-                              onClick: () =>
-                                setUpdateCardProviderData(provider),
+                              onClick: () => setUpdateCashlessData(provider),
                             },
                             {
                               variant: "danger",
                               label: "削除",
-                              onClick: () =>
-                                setDeleteCardProviderData(provider),
+                              onClick: () => setDeleteCashlessData(provider),
                             },
                           ]}
                         />
@@ -321,32 +315,32 @@ const SettingCardProvider: FC = () => {
           </ChakraUILink>
         )}
       </VStack>
-      <CardProviderUpdateModal
-        isOpen={!!updateCardProviderData}
-        onClose={() => setUpdateCardProviderData(undefined)}
+      <CashlessUpdateModal
+        isOpen={!!updateCashlessData}
+        onClose={() => setUpdateCashlessData(undefined)}
         onClick={(name: string, color: string) =>
-          updateCardProviderData &&
-          onUpdateCardProvider(updateCardProviderData.id, {
+          updateCashlessData &&
+          onUpdateCashless(updateCashlessData.id, {
             name,
             color,
-            order: updateCardProviderData?.order,
+            order: updateCashlessData?.order,
           })
         }
-        prevName={updateCardProviderData?.name ?? ""}
-        prevColor={updateCardProviderData?.color ?? ""}
+        prevName={updateCashlessData?.name ?? ""}
+        prevColor={updateCashlessData?.color ?? ""}
       />
-      <CardProviderDeleteModal
-        isOpen={!!deleteCardProviderData}
-        onClose={() => setDeleteCardProviderData(undefined)}
-        name={deleteCardProviderData?.name ?? ""}
-        cardDataLength={
-          cardDataLength.find(({ id }) => deleteCardProviderData?.id === id)
+      <CashlessDeleteModal
+        isOpen={!!deleteCashlessData}
+        onClose={() => setDeleteCashlessData(undefined)}
+        name={deleteCashlessData?.name ?? ""}
+        cashlessDataLength={
+          cashlessDataLength.find(({ id }) => deleteCashlessData?.id === id)
             ?.length ?? 0
         }
-        onClick={() => onDeleteCardProvider()}
+        onClick={() => onDeleteCashless()}
       />
     </>
   );
 };
 
-export default SettingCardProvider;
+export default Cashless;

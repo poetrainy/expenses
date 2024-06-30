@@ -3,37 +3,38 @@ import { useLoaderData } from "react-router-dom";
 import { Center, Flex, Text, VStack } from "@chakra-ui/react";
 import "chart.js/auto";
 import { Bar } from "react-chartjs-2";
-import { getExpensesAllCash, getExpensesAllCard } from "~/api/expenses";
-import { getCardProvider, getTargetAmount } from "~/api/setting";
+import { getExpensesAllCash, getExpensesAllCashless } from "~/api/expenses";
+import { getCashlessTarget } from "~/api/cashless";
+import { getTargetAmount } from "~/api/common";
 import { LoaderData } from "~/types";
 import { useSetPageContext } from "~/context/usePageContext";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const loader = async () => {
   const allCash = await getExpensesAllCash();
-  const allCard = await getExpensesAllCard();
+  const allCashless = await getExpensesAllCashless();
 
-  const cardProvider = await getCardProvider();
+  const cashlessTarget = await getCashlessTarget();
 
   const archives = [
     ...new Set([
       ...allCash.map(({ date }) => date.substring(0, 7)),
-      ...allCard.map(({ date }) => date.substring(0, 7)),
+      ...allCashless.map(({ date }) => date.substring(0, 7)),
     ]),
   ].sort();
 
-  const totalAmount = archives.map((item) => {
+  const totalAmount = archives.map((archive) => {
     const cash = allCash
-      .filter(({ date }) => date.startsWith(item))
+      .filter(({ date }) => date.startsWith(archive))
       .map(({ amount }) => amount)
       .reduce((sum, element) => sum + element, 0);
-    const card = Object.fromEntries(
-      cardProvider.map((provider) => [
-        provider.id,
-        allCard
+    const cashless = Object.fromEntries(
+      cashlessTarget.map((target) => [
+        target.id,
+        allCashless
           .filter(
-            ({ date, cardProvider }) =>
-              cardProvider.id === provider.id && date.startsWith(item)
+            (item) =>
+              item.target.id === target.id && item.date.startsWith(archive)
           )
           .map(({ amount }) => amount)
           .reduce((sum, element) => sum + element, 0),
@@ -41,21 +42,22 @@ export const loader = async () => {
     );
 
     return {
-      period: item,
+      period: archive,
       cash,
-      card,
+      cashless,
       total:
-        Object.values(card).reduce((sum, element) => sum + element, 0) + cash,
+        Object.values(cashless).reduce((sum, element) => sum + element, 0) +
+        cash,
     };
   });
 
   const targetAmount = await getTargetAmount();
 
-  return { archives, cardProvider, totalAmount, targetAmount };
+  return { archives, cashlessTarget, totalAmount, targetAmount };
 };
 
 const Statistics: FC = () => {
-  const { archives, cardProvider, totalAmount, targetAmount } =
+  const { archives, cashlessTarget, totalAmount, targetAmount } =
     useLoaderData() as LoaderData<typeof loader>;
 
   useSetPageContext({ title: "グラフ" });
@@ -77,10 +79,10 @@ const Statistics: FC = () => {
         data: totalAmount.map(({ cash }) => cash),
         backgroundColor: "rgba(99, 188, 255, 0.5)",
       },
-      ...cardProvider.map(({ id, name, color }) => {
+      ...cashlessTarget.map(({ id, name, color }) => {
         return {
           label: name,
-          data: totalAmount.map(({ card }) => card[id]),
+          data: totalAmount.map(({ cashless }) => cashless[id]),
           backgroundColor: color,
         };
       }),
@@ -93,6 +95,7 @@ const Statistics: FC = () => {
 
   const average = Math.trunc(total / totalAmount.length);
   const difference = targetAmount - average;
+  const isDifferencePositive = Math.sign(difference) === 1;
 
   const LIST = [
     [
@@ -110,8 +113,8 @@ const Statistics: FC = () => {
     [
       {
         label: "目標金額との差",
-        amount: `${Number.isInteger(difference) ? "+ " : ""}¥${difference.toLocaleString()}`,
-        variant: Number.isInteger(difference) ? "green" : undefined,
+        amount: `${isDifferencePositive ? "+" : "-"} ¥${Math.abs(difference).toLocaleString()}`,
+        variant: isDifferencePositive ? "green" : undefined,
         width: "100%",
       },
     ],

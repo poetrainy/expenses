@@ -1,9 +1,9 @@
 import { FC, useState } from "react";
 import { ActionFunctionArgs, redirect, useSubmit } from "react-router-dom";
 import { Button, Input, Text, VStack } from "@chakra-ui/react";
-import { updatePreset } from "~/api/setting";
+import { updatePreset } from "~/api/presets";
 import { useSetPageContext } from "~/context/usePageContext";
-import { SettingPresetBaseType } from "~/types/Settings";
+import { PresetBaseType } from "~/types/Settings";
 import { useSubmitting } from "~/hooks/useSubmitting";
 import AmountInputContainer from "~/components/AmountInputContainer";
 
@@ -14,7 +14,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const id = formData.get("id") as string;
   const content = JSON.parse(
     formData.get("content") as string
-  ) as SettingPresetBaseType;
+  ) as PresetBaseType;
 
   try {
     await updatePreset(id, content);
@@ -43,7 +43,7 @@ const SettingPresetNew: FC = () => {
         content: JSON.stringify({
           memo,
           amount: Number(amount),
-        } satisfies SettingPresetBaseType),
+        } satisfies PresetBaseType),
       },
       {
         method: "POST",

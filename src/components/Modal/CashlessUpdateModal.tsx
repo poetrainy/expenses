@@ -12,7 +12,7 @@ type Props = {
   prevColor: string;
 };
 
-const CardProviderUpdateModal: FC<Props> = ({
+const CashlessUpdateModal: FC<Props> = ({
   isOpen,
   onClose,
   onClick,
@@ -114,4 +114,4 @@ const CardProviderUpdateModal: FC<Props> = ({
   );
 };
 
-export default CardProviderUpdateModal;
+export default CashlessUpdateModal;

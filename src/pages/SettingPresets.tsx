@@ -12,11 +12,11 @@ import {
   updatePreset,
   deletePreset,
   getPresets,
-} from "~/api/setting";
+} from "~/api/presets";
 import ListContainer from "~/components/ListContainer";
 import { useSetPageContext } from "~/context/usePageContext";
 import { LoaderData } from "~/types";
-import { SettingPresetBaseType } from "~/types/Settings";
+import { PresetBaseType } from "~/types/Settings";
 import { useSubmitting } from "~/hooks/useSubmitting";
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -28,7 +28,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     case "save": {
       const content = JSON.parse(
         formData.get("content") as string
-      ) as SettingPresetBaseType;
+      ) as PresetBaseType;
 
       try {
         await savePreset(content);
@@ -45,7 +45,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const id = formData.get("id") as string;
       const content = JSON.parse(
         formData.get("content") as string
-      ) as SettingPresetBaseType;
+      ) as PresetBaseType;
 
       try {
         await updatePreset(id, content);

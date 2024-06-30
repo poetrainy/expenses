@@ -61,7 +61,7 @@ const ExpensesCashOperationModal: FC<Props> = ({
 
   const [date, setDate] = useState<string>(expenses?.date.split("T")[0] ?? "");
   const [type, setType] = useState<ExpensesCash>(
-    expenses?.type[0] ?? "expenses"
+    expenses?.category[0] ?? "expenses"
   );
   const [memo, setMemo] = useState<string>(expenses?.memo ?? "");
   const [result, setResult] = useState<number>(expenses?.amount ?? 0);
@@ -155,7 +155,10 @@ const ExpensesCashOperationModal: FC<Props> = ({
           </VStack>
         }
       >
-        <Tabs isFitted defaultIndex={expenses?.type.includes("income") ? 1 : 0}>
+        <Tabs
+          isFitted
+          defaultIndex={expenses?.category.includes("income") ? 1 : 0}
+        >
           <TabList>
             <Tab onClick={() => setType("expenses")}>支出</Tab>
             <Tab onClick={() => setType("income")}>収入</Tab>

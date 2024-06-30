@@ -3,13 +3,13 @@ import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import { Box } from "@chakra-ui/react";
 
-type CardType = {
+type CashlessType = {
   id: string;
   sortable: boolean;
   children: ReactNode;
 };
 
-const SortChildContainer: FC<CardType> = ({ id, sortable, children }) => {
+const SortChildContainer: FC<CashlessType> = ({ id, sortable, children }) => {
   const { attributes, listeners, setNodeRef, transform } = useSortable({ id });
 
   const style = {

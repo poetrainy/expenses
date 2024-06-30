@@ -1,29 +1,29 @@
 import { MicroCMSType } from "~/types/MicroCMS";
-import { SettingCardProviderType } from "~/types/Settings";
+import { CashlessTargetType } from "~/types/Settings";
 
 export type ExpensesCash = "expenses" | "income";
 
 export type ExpensesCashBaseType = {
   date: string;
-  type: ExpensesCash[];
+  category: ExpensesCash[];
   memo: string;
   amount: number;
 };
 
-export type ExpensesCardBaseType = {
+export type ExpensesCashlessBaseType = {
   date: string;
-  type: ExpensesCash[];
+  category: ExpensesCash[];
   amount: number;
-  cardProvider: SettingCardProviderType;
+  target: CashlessTargetType;
 };
 
-export type ExpensesCardSaveType = {
+export type ExpensesCashlessSaveType = {
   date: string;
-  type: ExpensesCash[];
+  category: ExpensesCash[];
   amount: number;
-  cardProvider: string;
+  cashless: string;
 };
 
 export type ExpensesCashType = MicroCMSType & ExpensesCashBaseType;
 
-export type ExpensesCardType = MicroCMSType & ExpensesCardBaseType;
+export type ExpensesCashlessType = MicroCMSType & ExpensesCashlessBaseType;

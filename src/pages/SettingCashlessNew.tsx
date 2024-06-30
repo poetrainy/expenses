@@ -6,9 +6,9 @@ import {
   useSubmit,
 } from "react-router-dom";
 import { Box, Button, Flex, Input, Text, VStack } from "@chakra-ui/react";
-import { getCardProvider, saveCardProvider } from "~/api/setting";
+import { getCashlessTarget, saveCashlessTarget } from "~/api/cashless";
 import { LoaderData } from "~/types";
-import { SettingCardProviderBaseType } from "~/types/Settings";
+import { CashlessTargetBaseType } from "~/types/Settings";
 import { useSetPageContext } from "~/context/usePageContext";
 import { useSubmitting } from "~/hooks/useSubmitting";
 import { GRAPH_COLORS } from "~/constants/colors";
@@ -18,12 +18,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const content = JSON.parse(
     formData.get("content") as string
-  ) as SettingCardProviderBaseType;
+  ) as CashlessTargetBaseType;
 
   try {
-    await saveCardProvider(content);
+    await saveCashlessTarget(content);
 
-    return redirect("/settings/card");
+    return redirect("/settings/cashless");
   } catch (e) {
     console.error(e);
 
@@ -33,13 +33,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const loader = async () => {
-  const cardProviderLength = (await getCardProvider()).length;
+  const cashlessLength = (await getCashlessTarget()).length;
 
-  return { cardProviderLength };
+  return { cashlessLength };
 };
 
-const SettingCardProvider: FC = () => {
-  const { cardProviderLength } = useLoaderData() as LoaderData<typeof loader>;
+const SettingCashless: FC = () => {
+  const { cashlessLength } = useLoaderData() as LoaderData<typeof loader>;
   const submit = useSubmit();
   const { isSubmittingAndLoading } = useSubmitting();
 
@@ -49,14 +49,14 @@ const SettingCardProvider: FC = () => {
   const [name, setName] = useState("");
   const [color, setColor] = useState(GRAPH_COLORS[0]);
 
-  const onSaveCardProvider = () => {
+  const onSaveCashlessTarget = () => {
     submit(
       {
         content: JSON.stringify({
           name,
           color,
-          order: cardProviderLength + 1,
-        } satisfies SettingCardProviderBaseType),
+          order: cashlessLength + 1,
+        } satisfies CashlessTargetBaseType),
       },
       {
         method: "POST",
@@ -116,7 +116,7 @@ const SettingCardProvider: FC = () => {
         isLoading={isSubmittingAndLoading && !!submitCount}
         isDisabled={isSubmittingAndLoading || !name.length}
         loadingText="保存"
-        onClick={() => onSaveCardProvider()}
+        onClick={() => onSaveCashlessTarget()}
         fontSize="14px"
       >
         保存
@@ -125,4 +125,4 @@ const SettingCardProvider: FC = () => {
   );
 };
 
-export default SettingCardProvider;
+export default SettingCashless;

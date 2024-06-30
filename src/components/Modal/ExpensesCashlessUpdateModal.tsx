@@ -9,24 +9,24 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import ModalBase from "~/components/Modal/ModalBase";
-import { ExpensesCardType, ExpensesCash } from "~/types/Expenses";
+import { ExpensesCashlessType, ExpensesCash } from "~/types/Expenses";
 import { useSubmitting } from "~/hooks/useSubmitting";
 import ExpensesAmountInput from "~/components/Modal/ExpensesAmountInput";
-import { SettingCardProviderType } from "~/types/Settings";
+import { CashlessTargetType } from "~/types/Settings";
 
 type Props = {
-  expenses?: ExpensesCardType;
+  expenses?: ExpensesCashlessType;
   date: { year: string; month: string };
-  cardProvider?: SettingCardProviderType;
+  cashless?: CashlessTargetType;
   isOpen: boolean;
   onClose: () => void;
   onSave: (type: ExpensesCash, amount: number) => void;
 };
 
-const ExpensesCardUpdateModal: FC<Props> = ({
+const ExpensesCashlessUpdateModal: FC<Props> = ({
   expenses,
   date,
-  cardProvider,
+  cashless,
   isOpen,
   onClose,
   onSave,
@@ -35,13 +35,13 @@ const ExpensesCardUpdateModal: FC<Props> = ({
   const [submitCount, setSubmitCount] = useState(0);
 
   const [type, setType] = useState<ExpensesCash>(
-    expenses?.type[0] ?? "expenses"
+    expenses?.category[0] ?? "expenses"
   );
   const [result, setResult] = useState<number>(expenses?.amount ?? 0);
 
   const LIST = [
     { label: "利用期間", value: `${date.year}年${date.month}月` },
-    { label: "種別", value: cardProvider?.name },
+    { label: "種別", value: cashless?.name },
   ];
 
   useEffect(() => {
@@ -85,7 +85,10 @@ const ExpensesCardUpdateModal: FC<Props> = ({
           </VStack>
         }
       >
-        <Tabs isFitted defaultIndex={expenses?.type.includes("income") ? 1 : 0}>
+        <Tabs
+          isFitted
+          defaultIndex={expenses?.category.includes("income") ? 1 : 0}
+        >
           <TabList>
             <Tab onClick={() => setType("expenses")}>支出</Tab>
             <Tab onClick={() => setType("income")}>収入</Tab>
@@ -118,4 +121,4 @@ const ExpensesCardUpdateModal: FC<Props> = ({
   );
 };
 
-export default ExpensesCardUpdateModal;
+export default ExpensesCashlessUpdateModal;

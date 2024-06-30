@@ -7,15 +7,15 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   name: string;
-  cardDataLength: number;
+  cashlessDataLength: number;
   onClick: () => void;
 };
 
-const CardProviderDeleteModal: FC<Props> = ({
+const CashlessDeleteModal: FC<Props> = ({
   isOpen,
   onClose,
   name,
-  cardDataLength,
+  cashlessDataLength,
   onClick,
 }) => {
   const { isSubmittingAndLoading } = useSubmitting();
@@ -50,10 +50,10 @@ const CardProviderDeleteModal: FC<Props> = ({
       }
     >
       <Text lineHeight="22px" whiteSpace="pre-line">
-        {`この情報を削除すると、関連する支出データ（${cardDataLength}件）も全て削除されます。この操作は元に戻せません。\n本当に削除を実行しますか？`}
+        {`この情報を削除すると、関連する支出データ（${cashlessDataLength}件）も全て削除されます。この操作は元に戻せません。\n本当に削除を実行しますか？`}
       </Text>
     </ModalBase>
   );
 };
 
-export default CardProviderDeleteModal;
+export default CashlessDeleteModal;

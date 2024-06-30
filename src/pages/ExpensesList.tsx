@@ -21,18 +21,19 @@ import {
 } from "@chakra-ui/react";
 import {
   deleteExpensesCash,
-  getExpensesFilteredCard,
+  getExpensesFilteredCashless,
   getExpensesFilteredCash,
-  saveExpensesCard,
-  updateExpensesCard,
+  saveExpensesCashless,
+  updateExpensesCashless,
   updateExpensesCash,
 } from "~/api/expenses";
-import { getCardProvider, savePreset } from "~/api/setting";
+import { getCashlessTarget } from "~/api/cashless";
+import { savePreset } from "~/api/presets";
 import { formatDate } from "~/libs/format";
 import { LoaderData } from "~/types";
 import {
-  ExpensesCardSaveType,
-  ExpensesCardType,
+  ExpensesCashlessSaveType,
+  ExpensesCashlessType,
   ExpensesCash,
   ExpensesCashBaseType,
   ExpensesCashType,
@@ -40,11 +41,8 @@ import {
 import ExpensesCashOperationModal from "~/components/Modal/ExpensesCashOperationModal";
 import ListContainer from "~/components/ListContainer";
 import { useSetPageContext } from "~/context/usePageContext";
-import {
-  SettingCardProviderType,
-  SettingPresetBaseType,
-} from "~/types/Settings";
-import ExpensesCardEditModal from "~/components/Modal/ExpensesCardUpdateModal";
+import { CashlessTargetType, PresetBaseType } from "~/types/Settings";
+import ExpensesCashlessUpdateModal from "~/components/Modal/ExpensesCashlessUpdateModal";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -85,13 +83,13 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       }
     }
 
-    case "card_save": {
+    case "cashless_save": {
       const content = JSON.parse(
         formData.get("content") as string
-      ) as ExpensesCardSaveType;
+      ) as ExpensesCashlessSaveType;
 
       try {
-        await saveExpensesCard(content);
+        await saveExpensesCashless(content);
 
         return redirect(currentPath);
       } catch (e) {
@@ -101,14 +99,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       }
     }
 
-    case "card_update": {
+    case "cashless_update": {
       const id = formData.get("id") as string;
       const content = JSON.parse(
         formData.get("content") as string
-      ) as ExpensesCardSaveType;
+      ) as ExpensesCashlessSaveType;
 
       try {
-        await updateExpensesCard(id, content);
+        await updateExpensesCashless(id, content);
 
         return redirect(currentPath);
       } catch (e) {
@@ -121,7 +119,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     case "save_preset": {
       const content = JSON.parse(
         formData.get("content") as string
-      ) as SettingPresetBaseType;
+      ) as PresetBaseType;
 
       try {
         await savePreset(content);
@@ -145,44 +143,45 @@ export const loader = async ({ params }: { params: Params<string> }) => {
     year,
     month.length === 1 ? `0${month}` : month
   );
-  const filteredCard = await getExpensesFilteredCard(
+  const filteredCashless = await getExpensesFilteredCashless(
     year,
     month.length === 1 ? `0${month}` : month
   );
 
-  const cardProvider = await getCardProvider();
+  const cashlessTarget = await getCashlessTarget();
 
   return {
     cash: filteredCash,
-    card: filteredCard,
-    cardProvider,
+    cashless: filteredCashless,
+    cashlessTarget,
     params: { year, month },
   };
 };
 
 const ExpensesList: FC = () => {
-  const { cash, card, cardProvider, params } = useLoaderData() as LoaderData<
-    typeof loader
-  >;
+  const { cash, cashless, cashlessTarget, params } =
+    useLoaderData() as LoaderData<typeof loader>;
   const submit = useSubmit();
 
   useSetPageContext({ title: "poetrainy-expenses" });
 
   const [edit, setEdit] = useState<ExpensesCashType>();
-  const [editCardVariant, setEditCardVariant] = useState<"new" | "edit">("new");
-  const [editCard, setEditCard] = useState<ExpensesCardType>();
-  const [editCardProvider, setEditCardProvider] =
-    useState<SettingCardProviderType>();
+  const [editCashlessVariant, setEditCashlessVariant] = useState<
+    "new" | "edit"
+  >("new");
+  const [editCashless, setEditCashless] = useState<ExpensesCashlessType>();
+  const [editCashlessTarget, setEditCashlessTarget] =
+    useState<CashlessTargetType>();
 
   const {
-    isOpen: isOpenExpensesCardUpdateModal,
-    onOpen: onOpenExpensesCardUpdateModal,
-    onClose: onCloseExpensesCardUpdateModal,
+    isOpen: isOpenExpensesCashlessUpdateModal,
+    onOpen: onOpenExpensesCashlessUpdateModal,
+    onClose: onCloseExpensesCashlessUpdateModal,
   } = useDisclosure();
 
   const onUpdateCash = async (
     date: string,
-    type: ExpensesCash,
+    category: ExpensesCash,
     memo: string,
     amount: number
   ) => {
@@ -196,7 +195,7 @@ const ExpensesList: FC = () => {
         id: edit.id,
         content: JSON.stringify({
           date,
-          type: [type],
+          category: [category],
           memo,
           amount,
         } satisfies ExpensesCashBaseType),
@@ -223,37 +222,37 @@ const ExpensesList: FC = () => {
     );
   };
 
-  const onUpdateCard = async (type: ExpensesCash, amount: number) => {
-    if (!editCardProvider) {
+  const onUpdateCashless = async (category: ExpensesCash, amount: number) => {
+    if (!editCashless) {
       return;
     }
 
-    if (editCardVariant === "edit" && editCard) {
+    if (editCashlessVariant === "edit" && editCashless) {
       submit(
         {
-          intent: "card_update",
-          id: editCard.id,
+          intent: "cashless_update",
+          id: editCashless.id,
           content: JSON.stringify({
-            date: editCard.date,
-            type: [type],
-            cardProvider: editCardProvider.id,
+            date: editCashless.date,
+            category: [category],
+            cashless: editCashless.id,
             amount,
-          } satisfies ExpensesCardSaveType),
+          } satisfies ExpensesCashlessSaveType),
         },
         {
           method: "POST",
         }
       );
-    } else if (editCardVariant === "new") {
+    } else if (editCashlessVariant === "new") {
       submit(
         {
-          intent: "card_save",
+          intent: "cashless_save",
           content: JSON.stringify({
             date: `${params.year}-${params.month}-1`,
-            type: [type],
-            cardProvider: editCardProvider.id,
+            category: [category],
+            cashless: editCashless.id,
             amount,
-          } satisfies ExpensesCardSaveType),
+          } satisfies ExpensesCashlessSaveType),
         },
         {
           method: "POST",
@@ -269,7 +268,7 @@ const ExpensesList: FC = () => {
         content: JSON.stringify({
           memo,
           amount,
-        } satisfies SettingPresetBaseType),
+        } satisfies PresetBaseType),
       },
       {
         method: "POST",
@@ -278,10 +277,10 @@ const ExpensesList: FC = () => {
   };
 
   const total = [
-    ...cash.map(({ type, amount }) =>
-      type.includes("expenses") ? amount : -amount
+    ...cash.map(({ category, amount }) =>
+      category.includes("expenses") ? amount : -amount
     ),
-    ...card.map(({ amount }) => amount),
+    ...cashless.map(({ amount }) => amount),
   ].reduce((sum, element) => sum + element, 0);
 
   return (
@@ -356,7 +355,7 @@ const ExpensesList: FC = () => {
                           </Text>
                           <Text
                             color={
-                              item.type.includes("income")
+                              item.category.includes("income")
                                 ? "green.400"
                                 : "gray.700"
                             }
@@ -364,7 +363,7 @@ const ExpensesList: FC = () => {
                             fontWeight="bold"
                             fontFamily="amount"
                           >
-                            {`${item.type.includes("income") ? "+" : ""} ¥${item.amount.toLocaleString()}`}
+                            {`${item.category.includes("income") ? "+" : ""} ¥${item.amount.toLocaleString()}`}
                           </Text>
                         </Flex>
                       </Flex>
@@ -386,23 +385,22 @@ const ExpensesList: FC = () => {
                 borderTopColor="gray.100"
                 borderBottomColor="gray.100"
               >
-                {cardProvider.map((provider) => (
+                {cashlessTarget.map((target) => (
                   <VStack
-                    key={provider.id}
+                    key={target.id}
                     as="button"
                     onClick={() => {
-                      const r: ExpensesCardType | undefined = card.find(
-                        ({ cardProvider }) =>
-                          cardProvider.name === provider.name
+                      const r: ExpensesCashlessType | undefined = cashless.find(
+                        (item) => item.target.name === target.name
                       );
                       if (r) {
-                        setEditCard(r);
-                        setEditCardVariant("edit");
+                        setEditCashless(r);
+                        setEditCashlessVariant("edit");
                       } else {
-                        setEditCardVariant("new");
+                        setEditCashlessVariant("new");
                       }
-                      setEditCardProvider(provider);
-                      onOpenExpensesCardUpdateModal();
+                      setEditCashlessTarget(target);
+                      onOpenExpensesCashlessUpdateModal();
                     }}
                     justifyContent="center"
                     alignItems="stretch"
@@ -414,7 +412,7 @@ const ExpensesList: FC = () => {
                     borderColor="gray.100"
                   >
                     <Text textAlign="left" textStyle="textHeading">
-                      {provider.name}
+                      {target.name}
                     </Text>
                     <Flex
                       justifyContent="flex-end"
@@ -426,7 +424,7 @@ const ExpensesList: FC = () => {
                       textAlign="right"
                       lineHeight="30px"
                     >
-                      {`¥${card.find(({ cardProvider }) => cardProvider.id === provider.id)?.amount.toLocaleString() ?? 0}`}
+                      {`¥${cashless.find((item) => item.target.id === target.id)?.amount.toLocaleString() ?? 0}`}
                     </Flex>
                   </VStack>
                 ))}
@@ -446,13 +444,13 @@ const ExpensesList: FC = () => {
           onDelete={() => onDeleteCash()}
         />
       )}
-      <ExpensesCardEditModal
-        expenses={editCard}
+      <ExpensesCashlessUpdateModal
+        expenses={editCashless}
         date={{ year: params.year, month: params.month }}
-        cardProvider={editCardProvider}
-        isOpen={isOpenExpensesCardUpdateModal}
-        onClose={onCloseExpensesCardUpdateModal}
-        onSave={onUpdateCard}
+        cashless={editCashlessTarget}
+        isOpen={isOpenExpensesCashlessUpdateModal}
+        onClose={onCloseExpensesCashlessUpdateModal}
+        onSave={onUpdateCashless}
       />
     </>
   );
