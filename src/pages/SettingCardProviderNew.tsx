@@ -44,8 +44,8 @@ const SettingCardProvider: FC = () => {
   const { isSubmittingAndLoading } = useSubmitting();
 
   useSetPageContext({ title: "電子決済登録", backLink: true });
-
   const [submitCount, setSubmitCount] = useState(0);
+
   const [name, setName] = useState("");
   const [color, setColor] = useState(GRAPH_COLORS[0]);
 

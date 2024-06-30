@@ -20,7 +20,6 @@ const CardProviderUpdateModal: FC<Props> = ({
   prevColor,
 }) => {
   const { isSubmittingAndLoading } = useSubmitting();
-
   const [submitCount, setSubmitCount] = useState(0);
 
   const modalClose = () => {

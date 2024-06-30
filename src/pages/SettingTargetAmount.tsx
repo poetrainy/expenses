@@ -41,11 +41,12 @@ export const loader = async () => {
 const SettingTargetAmount: FC = () => {
   const { targetAmount } = useLoaderData() as LoaderData<typeof loader>;
   const submit = useSubmit();
-  const { isSubmittingAndLoading } = useSubmitting();
 
   useSetPageContext({ title: "目標金額", backLink: true });
 
+  const { isSubmittingAndLoading } = useSubmitting();
   const [submitCount, setSubmitCount] = useState(0);
+
   const [updateTargetAmount, setUpdateAmount] = useState(String(targetAmount));
 
   const onUpdateTargetAmount = () => {

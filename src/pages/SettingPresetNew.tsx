@@ -32,8 +32,8 @@ const SettingPresetNew: FC = () => {
   const submit = useSubmit();
 
   useSetPageContext({ title: "プリセット登録", backLink: true });
-
   const [submitCount, setSubmitCount] = useState(0);
+
   const [memo, setMemo] = useState("");
   const [amount, setAmount] = useState("");
 
