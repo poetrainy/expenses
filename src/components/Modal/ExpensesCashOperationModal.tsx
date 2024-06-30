@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import {
   Button,
+  Checkbox,
   Flex,
   Input,
   Tab,
@@ -65,6 +66,11 @@ const ExpensesCashOperationModal: FC<Props> = ({
   );
   const [memo, setMemo] = useState<string>(expenses?.memo ?? "");
   const [result, setResult] = useState<number>(expenses?.amount ?? 0);
+
+  const now = new Date();
+  const formatNowString = now.toLocaleDateString();
+  const formatDate = new Date(date);
+  const formatDateString = formatDate.toLocaleDateString();
 
   const {
     isOpen: isOpenPresetRegisterModal,
@@ -164,20 +170,38 @@ const ExpensesCashOperationModal: FC<Props> = ({
             <Tab onClick={() => setType("income")}>収入</Tab>
           </TabList>
         </Tabs>
-        <VStack alignItems="stretch">
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text color="gray.600" fontWeight="bold">
+        <VStack alignItems="stretch" gap="12px">
+          <Flex justifyContent="space-between">
+            <Flex
+              as="span"
+              alignItems="center"
+              color="gray.600"
+              h="40px"
+              fontWeight="bold"
+            >
               日付
-            </Text>
-            <Input
-              type="date"
-              defaultValue={expenses?.date.split("T")[0]}
-              onChange={(e) => setDate(e.target.value)}
-              w="80%"
-            />
+            </Flex>
+            <VStack alignItems="stretch" w="80%">
+              <Input
+                type="date"
+                value={date}
+                defaultValue={expenses?.date.split("T")[0]}
+                onChange={(e) => setDate(e.target.value)}
+              />
+              <Checkbox
+                ml="auto"
+                isChecked={formatNowString === formatDateString}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  e.target.checked && setDate(now.toLocaleDateString("sv-SE"))
+                }
+                sx={{ ".chakra-checkbox__label": { fontSize: "14px" } }}
+              >
+                今日
+              </Checkbox>
+            </VStack>
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
-            <Text color="gray.600" fontWeight="bold">
+            <Text as="span" color="gray.600" fontWeight="bold">
               メモ
             </Text>
             <Input

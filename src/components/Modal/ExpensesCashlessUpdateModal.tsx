@@ -94,7 +94,7 @@ const ExpensesCashlessUpdateModal: FC<Props> = ({
             <Tab onClick={() => setType("income")}>収入</Tab>
           </TabList>
         </Tabs>
-        <VStack alignItems="stretch">
+        <VStack alignItems="stretch" gap="12px">
           {LIST.map(({ label, value }) => (
             <Flex
               key={label}
