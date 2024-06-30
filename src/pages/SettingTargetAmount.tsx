@@ -68,7 +68,7 @@ const SettingTargetAmount: FC = () => {
         <Text as="h2" textStyle="textHeading">
           目標金額
         </Text>
-        <AmountInputContainer>
+        <AmountInputContainer size="large">
           <Input
             type="number"
             value={updateTargetAmount}

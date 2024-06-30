@@ -128,14 +128,7 @@ const Statistics: FC = () => {
           <Flex key={i} justifyContent="center" flexWrap="wrap" gap="12px">
             {array.map((item) => (
               <VStack key={item.label} alignItems="stretch" gap="8px" flex={1}>
-                <Text
-                  color="gray.600"
-                  fontSize="13px"
-                  fontWeight="bold"
-                  lineHeight="13px"
-                >
-                  {item.label}
-                </Text>
+                <Text textStyle="textHeading">{item.label}</Text>
                 <Flex
                   justifyContent="flex-end"
                   alignItems="center"

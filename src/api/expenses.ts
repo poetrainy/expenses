@@ -1,7 +1,7 @@
 import { WriteApiRequestResult } from "microcms-js-sdk";
 import { client } from "~/libs/client";
 import {
-  ExpensesCardBaseType,
+  ExpensesCardSaveType,
   ExpensesCardType,
   ExpensesCashBaseType,
   ExpensesCashType,
@@ -130,8 +130,8 @@ export const getExpensesCard: (
 };
 
 export const saveExpensesCard: (
-  content: ExpensesCardBaseType
-) => Promise<WriteApiRequestResult> = async (content: ExpensesCardBaseType) => {
+  content: ExpensesCardSaveType
+) => Promise<WriteApiRequestResult> = async (content: ExpensesCardSaveType) => {
   const response = await client.create({
     endpoint: "card",
     content,
@@ -142,10 +142,10 @@ export const saveExpensesCard: (
 
 export const updateExpensesCard: (
   id: string,
-  content: ExpensesCardBaseType
+  content: ExpensesCardSaveType
 ) => Promise<WriteApiRequestResult> = async (
   id: string,
-  content: ExpensesCardBaseType
+  content: ExpensesCardSaveType
 ) => {
   const response = await client.update({
     endpoint: "card",

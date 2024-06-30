@@ -12,8 +12,16 @@ export type ExpensesCashBaseType = {
 
 export type ExpensesCardBaseType = {
   date: string;
+  type: ExpensesCash[];
   amount: number;
   cardProvider: SettingCardProviderType;
+};
+
+export type ExpensesCardSaveType = {
+  date: string;
+  type: ExpensesCash[];
+  amount: number;
+  cardProvider: string;
 };
 
 export type ExpensesCashType = MicroCMSType & ExpensesCashBaseType;

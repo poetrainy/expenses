@@ -8,8 +8,6 @@ import {
 } from "react-router-dom";
 import {
   Box,
-  Card,
-  CardBody,
   Flex,
   SimpleGrid,
   Tab,
@@ -19,17 +17,22 @@ import {
   Tabs,
   Text,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import {
   deleteExpensesCash,
   getExpensesFilteredCard,
   getExpensesFilteredCash,
+  saveExpensesCard,
+  updateExpensesCard,
   updateExpensesCash,
 } from "~/api/expenses";
 import { getCardProvider, savePreset } from "~/api/setting";
 import { formatDate } from "~/libs/format";
 import { LoaderData } from "~/types";
 import {
+  ExpensesCardSaveType,
+  ExpensesCardType,
   ExpensesCash,
   ExpensesCashBaseType,
   ExpensesCashType,
@@ -37,7 +40,11 @@ import {
 import ExpensesCashOperationModal from "~/components/Modal/ExpensesCashOperationModal";
 import ListContainer from "~/components/ListContainer";
 import { useSetPageContext } from "~/context/usePageContext";
-import { SettingPresetBaseType } from "~/types/Settings";
+import {
+  SettingCardProviderType,
+  SettingPresetBaseType,
+} from "~/types/Settings";
+import ExpensesCardEditModal from "~/components/Modal/ExpensesCardUpdateModal";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -47,7 +54,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const intent = formData.get("intent") as string;
 
   switch (intent) {
-    case "update": {
+    case "cash_update": {
       const id = formData.get("id") as string;
       const content = JSON.parse(
         formData.get("content") as string
@@ -64,11 +71,44 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       }
     }
 
-    case "delete": {
+    case "cash_delete": {
       const id = formData.get("id") as string;
 
       try {
         await deleteExpensesCash(id);
+
+        return redirect(currentPath);
+      } catch (e) {
+        console.error(e);
+
+        return null;
+      }
+    }
+
+    case "card_save": {
+      const content = JSON.parse(
+        formData.get("content") as string
+      ) as ExpensesCardSaveType;
+
+      try {
+        await saveExpensesCard(content);
+
+        return redirect(currentPath);
+      } catch (e) {
+        console.error(e);
+
+        return null;
+      }
+    }
+
+    case "card_update": {
+      const id = formData.get("id") as string;
+      const content = JSON.parse(
+        formData.get("content") as string
+      ) as ExpensesCardSaveType;
+
+      try {
+        await updateExpensesCard(id, content);
 
         return redirect(currentPath);
       } catch (e) {
@@ -128,9 +168,19 @@ const ExpensesList: FC = () => {
 
   useSetPageContext({ title: "poetrainy-expenses" });
 
-  const [edit, setEdit] = useState<ExpensesCashType | undefined>();
+  const [edit, setEdit] = useState<ExpensesCashType>();
+  const [editCardVariant, setEditCardVariant] = useState<"new" | "edit">("new");
+  const [editCard, setEditCard] = useState<ExpensesCardType>();
+  const [editCardProvider, setEditCardProvider] =
+    useState<SettingCardProviderType>();
 
-  const onUpdateExpenses = async (
+  const {
+    isOpen: isOpenExpensesCardUpdateModal,
+    onOpen: onOpenExpensesCardUpdateModal,
+    onClose: onCloseExpensesCardUpdateModal,
+  } = useDisclosure();
+
+  const onUpdateCash = async (
     date: string,
     type: ExpensesCash,
     memo: string,
@@ -142,7 +192,7 @@ const ExpensesList: FC = () => {
 
     submit(
       {
-        intent: "update",
+        intent: "cash_update",
         id: edit.id,
         content: JSON.stringify({
           date,
@@ -157,20 +207,59 @@ const ExpensesList: FC = () => {
     );
   };
 
-  const onDeleteExpenses = async () => {
+  const onDeleteCash = async () => {
     if (!edit) {
       return;
     }
 
     submit(
       {
-        intent: "delete",
+        intent: "cash_delete",
         id: edit.id,
       },
       {
         method: "POST",
       }
     );
+  };
+
+  const onUpdateCard = async (type: ExpensesCash, amount: number) => {
+    if (!editCardProvider) {
+      return;
+    }
+
+    if (editCardVariant === "edit" && editCard) {
+      submit(
+        {
+          intent: "card_update",
+          id: editCard.id,
+          content: JSON.stringify({
+            date: editCard.date,
+            type: [type],
+            cardProvider: editCardProvider.id,
+            amount,
+          } satisfies ExpensesCardSaveType),
+        },
+        {
+          method: "POST",
+        }
+      );
+    } else if (editCardVariant === "new") {
+      submit(
+        {
+          intent: "card_save",
+          content: JSON.stringify({
+            date: `${params.year}-${params.month}-1`,
+            type: [type],
+            cardProvider: editCardProvider.id,
+            amount,
+          } satisfies ExpensesCardSaveType),
+        },
+        {
+          method: "POST",
+        }
+      );
+    }
   };
 
   const onSavePreset = async (memo: string, amount: number) => {
@@ -289,7 +378,7 @@ const ExpensesList: FC = () => {
             <TabPanel p={0}>
               <SimpleGrid
                 columns={2}
-                spacing="8px"
+                spacing="12px"
                 bg="white"
                 m="0 -16px"
                 p="16px"
@@ -298,33 +387,48 @@ const ExpensesList: FC = () => {
                 borderBottomColor="gray.100"
               >
                 {cardProvider.map((provider) => (
-                  <Flex key={provider.id} as="li" alignItems="stretch" w="100%">
-                    <Card
-                      as="button"
-                      variant="outline"
-                      w="100%"
-                      justifyContent="space-between"
-                      rounded="16px"
+                  <VStack
+                    key={provider.id}
+                    as="button"
+                    onClick={() => {
+                      const r: ExpensesCardType | undefined = card.find(
+                        ({ cardProvider }) =>
+                          cardProvider.name === provider.name
+                      );
+                      if (r) {
+                        setEditCard(r);
+                        setEditCardVariant("edit");
+                      } else {
+                        setEditCardVariant("new");
+                      }
+                      setEditCardProvider(provider);
+                      onOpenExpensesCardUpdateModal();
+                    }}
+                    justifyContent="center"
+                    alignItems="stretch"
+                    gap="8px"
+                    h="80px"
+                    p="0 8px"
+                    rounded="8px"
+                    border="1px solid"
+                    borderColor="gray.100"
+                  >
+                    <Text textAlign="left" textStyle="textHeading">
+                      {provider.name}
+                    </Text>
+                    <Flex
+                      justifyContent="flex-end"
+                      alignItems="center"
+                      fontSize="26px"
+                      fontWeight="bold"
+                      fontFamily="amount"
+                      wordBreak="break-word"
+                      textAlign="right"
+                      lineHeight="30px"
                     >
-                      <CardBody w="100%" p="8px">
-                        <Box
-                          role="presentation"
-                          w="100%"
-                          bg={provider.color}
-                          rounded="8px"
-                          aspectRatio={1.618 / 1}
-                        />
-                        <Text textStyle="textHeading">{provider.name}</Text>
-                        <Text
-                          color="gray.700"
-                          fontSize="14px"
-                          fontWeight="bold"
-                        >
-                          {`${card.find(({ cardProvider }) => cardProvider === provider)?.amount.toLocaleString() ?? "（未登録）"}`}
-                        </Text>
-                      </CardBody>
-                    </Card>
-                  </Flex>
+                      {`¥${card.find(({ cardProvider }) => cardProvider.id === provider.id)?.amount.toLocaleString() ?? 0}`}
+                    </Flex>
+                  </VStack>
                 ))}
               </SimpleGrid>
             </TabPanel>
@@ -337,15 +441,19 @@ const ExpensesList: FC = () => {
           isOpen={!!edit}
           expenses={edit}
           onClose={() => setEdit(undefined)}
-          onSave={(date, type, memo, amount) =>
-            onUpdateExpenses(date, type, memo, amount)
-          }
-          onSavePreset={(memo: string, amount: number) =>
-            onSavePreset(memo, amount)
-          }
-          onDelete={() => onDeleteExpenses()}
+          onSave={onUpdateCash}
+          onSavePreset={onSavePreset}
+          onDelete={() => onDeleteCash()}
         />
       )}
+      <ExpensesCardEditModal
+        expenses={editCard}
+        date={{ year: params.year, month: params.month }}
+        cardProvider={editCardProvider}
+        isOpen={isOpenExpensesCardUpdateModal}
+        onClose={onCloseExpensesCardUpdateModal}
+        onSave={onUpdateCard}
+      />
     </>
   );
 };
