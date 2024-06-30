@@ -380,7 +380,7 @@ const ExpensesList: FC = () => {
                 spacing="12px"
                 bg="white"
                 m="0 -16px"
-                p="16px"
+                p="28px 16px"
                 borderY="1px solid"
                 borderTopColor="gray.100"
                 borderBottomColor="gray.100"
