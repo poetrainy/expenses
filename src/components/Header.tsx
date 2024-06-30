@@ -82,7 +82,7 @@ const Header: FC<Props> = ({ archives }) => {
         borderBottomColor="gray.100"
       >
         <Heading as="h1" color="gray.700" fontSize="16px">
-          {pageContext?.title ?? "poetrainy-expenses"}
+          {pageContext?.title ?? "Expenses"}
         </Heading>
         {pageContext?.backLink && (
           <IconButton

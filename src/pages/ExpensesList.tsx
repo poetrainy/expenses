@@ -163,7 +163,7 @@ const ExpensesList: FC = () => {
     useLoaderData() as LoaderData<typeof loader>;
   const submit = useSubmit();
 
-  useSetPageContext({ title: "poetrainy-expenses" });
+  useSetPageContext({ title: "Expenses" });
 
   const [edit, setEdit] = useState<ExpensesCashType>();
   const [editCashlessVariant, setEditCashlessVariant] = useState<
