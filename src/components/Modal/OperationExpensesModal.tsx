@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import ModalBase from "~/components/Modal/ModalBase";
 import { ExpensesCash, ExpensesCashType } from "~/types/Expenses";
+import { useSubmitting } from "~/hooks/useSubmitting";
 
 const NUMBERS = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
 const ARITHMETICS: string[] = ["/", "*", "-", "+"];
@@ -47,8 +48,10 @@ const EXPENSES_AND_INCOME_MAP: Record<ExpensesCash, string> = {
 };
 
 type Props = {
+  variant: ModalVariant;
+  expenses?: ExpensesCashType;
   isOpen: boolean;
-  isSubmitting: boolean;
+  isSubmitting?: boolean;
   onClose: () => void;
   onSave: (
     date: string,
@@ -56,32 +59,22 @@ type Props = {
     memo: string,
     amount: number
   ) => void;
-} & (
-  | {
-      variant: "new";
-      expenses?: undefined;
-      onDelete?: undefined;
-      isDeleting?: undefined;
-    }
-  | {
-      variant: "edit";
-      expenses: ExpensesCashType;
-      onDelete: () => void;
-      isDeleting: boolean;
-    }
-);
+  onDelete?: () => void;
+};
 
 const OperationExpensesModal: FC<Props> = ({
   variant,
   expenses,
   isOpen,
   isSubmitting,
-  isDeleting,
   onClose,
   onSave,
   onDelete,
 }) => {
-  const [date, setDate] = useState<string>(expenses?.date ?? "");
+  const { isSubmittingAndLoading } = useSubmitting();
+  const [submitCount, setSubmitCount] = useState(0);
+
+  const [date, setDate] = useState<string>(expenses?.date.split("T")[0] ?? "");
   const [type, setType] = useState<ExpensesCash>(
     expenses?.type[0] ?? "expenses"
   );
@@ -89,21 +82,17 @@ const OperationExpensesModal: FC<Props> = ({
   const [result, setResult] = useState<string>(
     expenses?.amount ? String(expenses?.amount) : ""
   );
-  const [prevIsSubmitting, setPrevIsSubmitting] = useState<boolean>(false);
-  const [prevIsDeleting, setPrevIsDeleting] = useState<boolean>(false);
 
   useEffect(() => {
-    if (
-      (prevIsSubmitting && !isSubmitting) ||
-      (prevIsDeleting && !isDeleting)
-    ) {
-      setPrevIsSubmitting(false);
+    if (!isSubmittingAndLoading && !isSubmitting && !!submitCount) {
+      onClose();
       setDate("");
       setType("expenses");
       setMemo("");
       setResult("");
+      setSubmitCount(0);
     }
-  }, [isDeleting, isSubmitting, prevIsDeleting, prevIsSubmitting]);
+  }, [isSubmitting, isSubmittingAndLoading, onClose, submitCount]);
 
   return (
     <ModalBase
@@ -122,10 +111,7 @@ const OperationExpensesModal: FC<Props> = ({
               {
                 variant: "danger",
                 label: "この記録を削除",
-                onClick: () => {
-                  onDelete?.();
-                  setPrevIsDeleting(true);
-                },
+                onClick: () => onDelete?.(),
               },
             ]
           : undefined
@@ -136,13 +122,17 @@ const OperationExpensesModal: FC<Props> = ({
             w="100%"
             type="button"
             onClick={() => {
+              setSubmitCount((p) => p + 1);
               onSave?.(`${date}`, type, memo, Number(result));
-              setPrevIsSubmitting(true);
             }}
-            isLoading={isSubmitting}
+            isLoading={isSubmittingAndLoading || isSubmitting}
             loadingText={`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
             isDisabled={
-              !date.length || !memo.length || !result.length || !!isDeleting
+              !date.length ||
+              !memo.length ||
+              !result.length ||
+              isSubmittingAndLoading ||
+              isSubmitting
             }
             h="56px"
           >
@@ -151,7 +141,7 @@ const OperationExpensesModal: FC<Props> = ({
         </VStack>
       }
     >
-      <Tabs isFitted defaultIndex={type === "expenses" ? 0 : 1}>
+      <Tabs isFitted defaultIndex={expenses?.type.includes("income") ? 1 : 0}>
         <TabList>
           <Tab onClick={() => setType("expenses")}>支出</Tab>
           <Tab onClick={() => setType("income")}>収入</Tab>
@@ -164,7 +154,7 @@ const OperationExpensesModal: FC<Props> = ({
           </Text>
           <Input
             type="date"
-            value={date}
+            defaultValue={expenses?.date.split("T")[0]}
             onChange={(e) => setDate(e.target.value)}
             w="80%"
           />
@@ -175,7 +165,7 @@ const OperationExpensesModal: FC<Props> = ({
           </Text>
           <Input
             type="text"
-            value={memo}
+            defaultValue={expenses?.memo}
             onChange={(e) => setMemo(e.target.value)}
             w="80%"
             placeholder="e.g. やまもとクリニック"

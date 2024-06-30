@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useLocation, useNavigate, useRevalidator } from "react-router-dom";
 import { Center, Heading, IconButton, useDisclosure } from "@chakra-ui/react";
 import { ChevronLeftIcon, EditIcon, HamburgerIcon } from "@chakra-ui/icons";
@@ -7,7 +7,6 @@ import MenuDrawer from "~/components/MenuDrawer";
 import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
 import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
 import { usePageContext } from "~/context/usePageContext";
-import { useSubmitting } from "~/hooks/useSubmitting";
 
 type Props = {
   archives: number[][];
@@ -18,8 +17,8 @@ const Header: FC<Props> = ({ archives }) => {
   const revalidator = useRevalidator();
   const navigate = useNavigate();
   const pageContext = usePageContext();
-  const { isSubmittingAndLoading } = useSubmitting();
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const isExpensesPage = location.pathname.startsWith("/expenses");
 
   const {
@@ -50,6 +49,8 @@ const Header: FC<Props> = ({ archives }) => {
     memo: string,
     amount: number
   ) => {
+    setIsSubmitting(true);
+
     try {
       await saveExpensesCash({
         date,
@@ -59,9 +60,10 @@ const Header: FC<Props> = ({ archives }) => {
       } satisfies ExpensesCashBaseType);
 
       revalidator.revalidate();
-      onCloseOperationExpensesModal();
     } catch (e) {
       console.error(e);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -126,8 +128,8 @@ const Header: FC<Props> = ({ archives }) => {
           <OperationExpensesModal
             variant="new"
             isOpen={isOpenOperationExpensesModal}
+            isSubmitting={isSubmitting || revalidator.state === "loading"}
             onClose={onCloseOperationExpensesModal}
-            isSubmitting={isSubmittingAndLoading}
             onSave={(date, type, memo, amount) =>
               onExpensesSave(date, type, memo, amount)
             }

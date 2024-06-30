@@ -1,5 +1,11 @@
 import { FC, useState } from "react";
-import { Params, useLoaderData, useRevalidator } from "react-router-dom";
+import {
+  ActionFunctionArgs,
+  Params,
+  redirect,
+  useLoaderData,
+  useSubmit,
+} from "react-router-dom";
 import {
   Box,
   Card,
@@ -31,10 +37,47 @@ import {
 import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
 import ListContainer from "~/components/ListContainer";
 import { useSetPageContext } from "~/context/usePageContext";
-import { useSubmitting } from "~/hooks/useSubmitting";
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const action = async () => {};
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  const currentPath = `/expenses/${params.year}/${params.month}`;
+
+  const formData = await request.formData();
+  const intent = formData.get("intent") as string;
+
+  switch (intent) {
+    case "update": {
+      const id = formData.get("id") as string;
+      const content = JSON.parse(
+        formData.get("content") as string
+      ) as ExpensesCashBaseType;
+
+      try {
+        await updateExpensesCash(id, content);
+
+        return redirect(currentPath);
+      } catch (e) {
+        console.error(e);
+
+        return null;
+      }
+    }
+
+    case "delete": {
+      const id = formData.get("id") as string;
+
+      try {
+        await deleteExpensesCash(id);
+
+        return redirect(currentPath);
+      } catch (e) {
+        console.error(e);
+
+        return null;
+      }
+    }
+  }
+};
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const loader = async ({ params }: { params: Params<string> }) => {
@@ -64,13 +107,11 @@ const ExpensesList: FC = () => {
   const { cash, card, cardProvider, params } = useLoaderData() as LoaderData<
     typeof loader
   >;
-  const revalidator = useRevalidator();
-  const { isSubmittingAndLoading } = useSubmitting();
+  const submit = useSubmit();
 
   useSetPageContext({ title: "poetrainy-expenses" });
 
   const [edit, setEdit] = useState<ExpensesCashType | undefined>();
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const onExpensesUpdate = async (
     date: string,
@@ -82,21 +123,21 @@ const ExpensesList: FC = () => {
       return;
     }
 
-    try {
-      await updateExpensesCash(edit.id, {
-        date,
-        type: [type],
-        memo,
-        amount,
-      } satisfies ExpensesCashBaseType);
-
-      revalidator.revalidate();
-      setEdit(undefined);
-    } catch (e) {
-      console.error(e);
-    }
-
-    setEdit(undefined);
+    submit(
+      {
+        intent: "update",
+        id: edit.id,
+        content: JSON.stringify({
+          date,
+          type: [type],
+          memo,
+          amount,
+        } satisfies ExpensesCashBaseType),
+      },
+      {
+        method: "POST",
+      }
+    );
   };
 
   const onExpensesDelete = async () => {
@@ -104,21 +145,15 @@ const ExpensesList: FC = () => {
       return;
     }
 
-    setIsDeleting(true);
-
-    try {
-      await deleteExpensesCash(edit.id);
-
-      revalidator.revalidate();
-      setEdit(undefined);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsDeleting(false);
-    }
-
-    setIsDeleting(false);
-    setEdit(undefined);
+    submit(
+      {
+        intent: "delete",
+        id: edit.id,
+      },
+      {
+        method: "POST",
+      }
+    );
   };
 
   const total = [
@@ -264,18 +299,16 @@ const ExpensesList: FC = () => {
           </TabPanels>
         </Tabs>
       </VStack>
-      {edit && (
+      {!!edit && (
         <OperationExpensesModal
           variant="edit"
           isOpen={!!edit}
+          expenses={edit}
           onClose={() => setEdit(undefined)}
-          isSubmitting={isSubmittingAndLoading}
-          isDeleting={isDeleting}
           onSave={(date, type, memo, amount) =>
             onExpensesUpdate(date, type, memo, amount)
           }
           onDelete={() => onExpensesDelete()}
-          expenses={edit}
         />
       )}
     </>
