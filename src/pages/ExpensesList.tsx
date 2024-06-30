@@ -34,7 +34,7 @@ import {
   ExpensesCashBaseType,
   ExpensesCashType,
 } from "~/types/Expenses";
-import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
+import ExpensesCashOperationModal from "~/components/Modal/ExpensesCashOperationModal";
 import ListContainer from "~/components/ListContainer";
 import { useSetPageContext } from "~/context/usePageContext";
 import { SettingPresetBaseType } from "~/types/Settings";
@@ -332,7 +332,7 @@ const ExpensesList: FC = () => {
         </Tabs>
       </VStack>
       {!!edit && (
-        <OperationExpensesModal
+        <ExpensesCashOperationModal
           variant="edit"
           isOpen={!!edit}
           expenses={edit}

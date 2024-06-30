@@ -66,7 +66,7 @@ type Props = {
   onDelete?: () => void;
 };
 
-const OperationExpensesModal: FC<Props> = ({
+const ExpensesCashOperationModal: FC<Props> = ({
   variant,
   expenses,
   isOpen,
@@ -310,4 +310,4 @@ const OperationExpensesModal: FC<Props> = ({
   );
 };
 
-export default OperationExpensesModal;
+export default ExpensesCashOperationModal;

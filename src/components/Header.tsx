@@ -4,7 +4,7 @@ import { Center, Heading, IconButton, useDisclosure } from "@chakra-ui/react";
 import { ChevronLeftIcon, EditIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { saveExpensesCash } from "~/api/expenses";
 import MenuDrawer from "~/components/MenuDrawer";
-import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
+import ExpensesCashOperationModal from "~/components/Modal/ExpensesCashOperationModal";
 import { ExpensesCash, ExpensesCashBaseType } from "~/types/Expenses";
 import { usePageContext } from "~/context/usePageContext";
 
@@ -28,9 +28,9 @@ const Header: FC<Props> = ({ archives }) => {
   } = useDisclosure();
 
   const {
-    isOpen: isOpenOperationExpensesModal,
-    onOpen: onOpenOperationExpensesModal,
-    onClose: onCloseOperationExpensesModal,
+    isOpen: isOpenExpensesCashOperationModal,
+    onOpen: onOpenExpensesCashOperationModal,
+    onClose: onCloseExpensesCashOperationModal,
   } = useDisclosure();
 
   useEffect(() => {
@@ -110,7 +110,7 @@ const Header: FC<Props> = ({ archives }) => {
               icon={<EditIcon boxSize="20px" />}
               variant="ghost"
               aria-label="収支を登録する"
-              onClick={() => onOpenOperationExpensesModal()}
+              onClick={() => onOpenExpensesCashOperationModal()}
               m="auto"
               pos="absolute"
               inset="0 16px 0 auto"
@@ -125,11 +125,11 @@ const Header: FC<Props> = ({ archives }) => {
             onClose={onCloseMenuDrawer}
             archives={archives}
           />
-          <OperationExpensesModal
+          <ExpensesCashOperationModal
             variant="new"
-            isOpen={isOpenOperationExpensesModal}
+            isOpen={isOpenExpensesCashOperationModal}
             isSubmitting={isSubmitting || revalidator.state === "loading"}
-            onClose={onCloseOperationExpensesModal}
+            onClose={onCloseExpensesCashOperationModal}
             onSave={(date, type, memo, amount) =>
               onExpensesSave(date, type, memo, amount)
             }
