@@ -30,7 +30,7 @@ const MenuBase: FC<Props> = ({ menu, ...menuButtonProps }) => (
       minW="32px"
       {...menuButtonProps}
     />
-    <MenuList rounded="16px" overflow="hidden">
+    <MenuList minW="184px" rounded="16px" overflow="hidden">
       {menu.map(({ variant, label, onClick }) => (
         <MenuItem
           key={label}
