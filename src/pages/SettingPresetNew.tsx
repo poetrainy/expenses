@@ -91,7 +91,7 @@ const SettingPresetNew: FC = () => {
         }}
         fontSize="14px"
       >
-        保存
+        登録
       </Button>
     </VStack>
   );

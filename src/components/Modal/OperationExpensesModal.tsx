@@ -9,8 +9,10 @@ import {
   Tabs,
   Text,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 import ModalBase from "~/components/Modal/ModalBase";
+import PresetRegisterModal from "~/components/Modal/PresetRegisterModal";
 import { ExpensesCash, ExpensesCashType } from "~/types/Expenses";
 import { useSubmitting } from "~/hooks/useSubmitting";
 
@@ -59,6 +61,7 @@ type Props = {
     memo: string,
     amount: number
   ) => void;
+  onSavePreset?: (memo: string, amount: number) => void;
   onDelete?: () => void;
 };
 
@@ -69,6 +72,7 @@ const OperationExpensesModal: FC<Props> = ({
   isSubmitting,
   onClose,
   onSave,
+  onSavePreset,
   onDelete,
 }) => {
   const { isSubmittingAndLoading } = useSubmitting();
@@ -83,6 +87,12 @@ const OperationExpensesModal: FC<Props> = ({
     expenses?.amount ? String(expenses?.amount) : ""
   );
 
+  const {
+    isOpen: isOpenPresetRegisterModal,
+    onOpen: onOpenPresetRegisterModal,
+    onClose: onClosePresetRegisterModal,
+  } = useDisclosure();
+
   useEffect(() => {
     if (!isSubmittingAndLoading && !isSubmitting && !!submitCount) {
       onClose();
@@ -95,133 +105,154 @@ const OperationExpensesModal: FC<Props> = ({
   }, [isSubmitting, isSubmittingAndLoading, onClose, submitCount]);
 
   return (
-    <ModalBase
-      isOpen={isOpen}
-      onClose={onClose}
-      size={["full", "3xl"]}
-      heading={`収支を${ACTION_MAP[variant]}する`}
-      headerLeftAction={
-        variant === "edit"
-          ? [
-              {
-                variant: "normal",
-                label: "プリセットに登録",
-                onClick: () => console.log("registered"),
-              },
-              {
-                variant: "danger",
-                label: "この記録を削除",
-                onClick: () => onDelete?.(),
-              },
-            ]
-          : undefined
-      }
-      footer={
-        <VStack gap="8px" w="100%" maxW="600px" m="auto" p="0 0 16px">
-          <Button
-            w="100%"
-            type="button"
-            onClick={() => {
-              setSubmitCount((p) => p + 1);
-              onSave?.(`${date}`, type, memo, Number(result));
-            }}
-            isLoading={isSubmittingAndLoading || isSubmitting}
-            loadingText={`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
-            isDisabled={
-              !date.length ||
-              !memo.length ||
-              !result.length ||
-              isSubmittingAndLoading ||
-              isSubmitting
-            }
-            h="56px"
-          >
-            {`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
-          </Button>
-        </VStack>
-      }
-    >
-      <Tabs isFitted defaultIndex={expenses?.type.includes("income") ? 1 : 0}>
-        <TabList>
-          <Tab onClick={() => setType("expenses")}>支出</Tab>
-          <Tab onClick={() => setType("income")}>収入</Tab>
-        </TabList>
-      </Tabs>
-      <VStack alignItems="stretch">
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text color="gray.600" fontWeight="bold">
-            日付
-          </Text>
-          <Input
-            type="date"
-            defaultValue={expenses?.date.split("T")[0]}
-            onChange={(e) => setDate(e.target.value)}
-            w="80%"
-          />
-        </Flex>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text color="gray.600" fontWeight="bold">
-            メモ
-          </Text>
-          <Input
-            type="text"
-            defaultValue={expenses?.memo}
-            onChange={(e) => setMemo(e.target.value)}
-            w="80%"
-            placeholder="e.g. やまもとクリニック"
-          />
-        </Flex>
-      </VStack>
-      <VStack gap="16px" w="100%">
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-          w="100%"
-          h="48px"
-        >
-          <Center
-            as="button"
-            type="button"
-            onClick={() => setResult("")}
-            w="calc(((100% * 0.8 + 2px) - 4px * 3) / 3)"
-            h="48px"
-            fontSize="20px"
-            fontFamily="amount"
-            transition="background 0.2s"
-            layerStyle="buttonBackgroundTransition.300"
-          >
-            Clr
-          </Center>
-          <Text as="span" fontSize="40px" fontFamily="amount">
-            <Text as="span" color="gray.500">
-              {`${type === "income" ? "+ " : ""}¥`}
-            </Text>
-            <Text
-              as="span"
-              sx={{
-                ...(type === "income" && {
-                  color: "green.400",
-                }),
+    <>
+      <ModalBase
+        isOpen={isOpen}
+        onClose={onClose}
+        size={["full", "3xl"]}
+        heading={`収支を${ACTION_MAP[variant]}する`}
+        headerLeftAction={
+          variant === "edit"
+            ? [
+                {
+                  variant: "normal",
+                  label: "プリセットに登録",
+                  onClick: () => onOpenPresetRegisterModal(),
+                },
+                {
+                  variant: "danger",
+                  label: "この記録を削除",
+                  onClick: () => {
+                    onDelete?.();
+                    setSubmitCount((p) => p + 1);
+                  },
+                },
+              ]
+            : undefined
+        }
+        footer={
+          <VStack gap="8px" w="100%" maxW="600px" m="auto" p="0 0 16px">
+            <Button
+              w="100%"
+              type="button"
+              onClick={() => {
+                setSubmitCount((p) => p + 1);
+                onSave?.(`${date}`, type, memo, Number(result));
               }}
+              isLoading={
+                (isSubmittingAndLoading || isSubmitting) && !!submitCount
+              }
+              loadingText={`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
+              isDisabled={
+                !date.length ||
+                !memo.length ||
+                !result.length ||
+                isSubmittingAndLoading ||
+                isSubmitting
+              }
+              h="56px"
             >
-              {Number(result.length ? result : "0").toLocaleString()}
+              {`${EXPENSES_AND_INCOME_MAP[type]}を${ACTION_MAP[variant]}する`}
+            </Button>
+          </VStack>
+        }
+      >
+        <Tabs isFitted defaultIndex={expenses?.type.includes("income") ? 1 : 0}>
+          <TabList>
+            <Tab onClick={() => setType("expenses")}>支出</Tab>
+            <Tab onClick={() => setType("income")}>収入</Tab>
+          </TabList>
+        </Tabs>
+        <VStack alignItems="stretch">
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text color="gray.600" fontWeight="bold">
+              日付
             </Text>
-          </Text>
-        </Flex>
-        <Flex gap="4px" w="100%">
+            <Input
+              type="date"
+              defaultValue={expenses?.date.split("T")[0]}
+              onChange={(e) => setDate(e.target.value)}
+              w="80%"
+            />
+          </Flex>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Text color="gray.600" fontWeight="bold">
+              メモ
+            </Text>
+            <Input
+              type="text"
+              defaultValue={expenses?.memo}
+              onChange={(e) => setMemo(e.target.value)}
+              w="80%"
+              placeholder="e.g. やまもとクリニック"
+            />
+          </Flex>
+        </VStack>
+        <VStack gap="16px" w="100%">
           <Flex
-            flexWrap="wrap"
-            gap="4px"
+            justifyContent="space-between"
+            alignItems="center"
             w="100%"
-            // w="calc(100% * 0.8 + 2px)"
+            h="48px"
           >
-            {NUMBERS.map((number) => (
+            <Center
+              as="button"
+              type="button"
+              onClick={() => setResult("")}
+              w="calc(((100% * 0.8 + 2px) - 4px * 3) / 3)"
+              h="48px"
+              fontSize="20px"
+              fontFamily="amount"
+              transition="background 0.2s"
+              layerStyle="buttonBackgroundTransition.300"
+            >
+              Clr
+            </Center>
+            <Text as="span" fontSize="40px" fontFamily="amount">
+              <Text as="span" color="gray.500">
+                {`${type === "income" ? "+ " : ""}¥`}
+              </Text>
+              <Text
+                as="span"
+                sx={{
+                  ...(type === "income" && {
+                    color: "green.400",
+                  }),
+                }}
+              >
+                {Number(result.length ? result : "0").toLocaleString()}
+              </Text>
+            </Text>
+          </Flex>
+          <Flex gap="4px" w="100%">
+            <Flex
+              flexWrap="wrap"
+              gap="4px"
+              w="100%"
+              // w="calc(100% * 0.8 + 2px)"
+            >
+              {NUMBERS.map((number) => (
+                <Center
+                  as="button"
+                  type="button"
+                  key={number}
+                  onClick={() =>
+                    setResult((p) => (p.length >= 7 ? p : `${p}${number}`))
+                  }
+                  w="calc((100% - 4px * 2) / 3)"
+                  h="56px"
+                  fontSize="22px"
+                  fontFamily="amount"
+                  layerStyle="buttonBackgroundTransition.200"
+                >
+                  {number}
+                </Center>
+              ))}
               <Center
                 as="button"
                 type="button"
-                key={number}
                 onClick={() =>
-                  setResult((p) => (p.length >= 7 ? p : `${p}${number}`))
+                  setResult((p) => (p.length >= 7 ? p : p.length ? `${p}0` : p))
                 }
                 w="calc((100% - 4px * 2) / 3)"
                 h="56px"
@@ -229,28 +260,23 @@ const OperationExpensesModal: FC<Props> = ({
                 fontFamily="amount"
                 layerStyle="buttonBackgroundTransition.200"
               >
-                {number}
+                0
               </Center>
-            ))}
-            <Center
-              as="button"
-              type="button"
-              onClick={() =>
-                setResult((p) => (p.length >= 7 ? p : p.length ? `${p}0` : p))
-              }
-              w="calc((100% - 4px * 2) / 3)"
-              h="56px"
-              fontSize="22px"
-              fontFamily="amount"
-              layerStyle="buttonBackgroundTransition.200"
-            >
-              0
-            </Center>
+            </Flex>
+            {/* <Arithmetic /> */}
           </Flex>
-          {/* <Arithmetic /> */}
-        </Flex>
-      </VStack>
-    </ModalBase>
+        </VStack>
+      </ModalBase>
+      {onSavePreset && (
+        <PresetRegisterModal
+          isOpen={isOpenPresetRegisterModal}
+          onClose={onClosePresetRegisterModal}
+          prevMemo={memo}
+          prevAmount={Number(result)}
+          onClick={onSavePreset}
+        />
+      )}
+    </>
   );
 };
 

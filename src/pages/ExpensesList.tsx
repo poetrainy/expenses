@@ -26,7 +26,7 @@ import {
   getExpensesFilteredCash,
   updateExpensesCash,
 } from "~/api/expenses";
-import { getCardProvider } from "~/api/setting";
+import { getCardProvider, savePreset } from "~/api/setting";
 import { formatDate } from "~/libs/format";
 import { LoaderData } from "~/types";
 import {
@@ -37,6 +37,7 @@ import {
 import OperationExpensesModal from "~/components/Modal/OperationExpensesModal";
 import ListContainer from "~/components/ListContainer";
 import { useSetPageContext } from "~/context/usePageContext";
+import { SettingPresetBaseType } from "~/types/Settings";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -70,6 +71,22 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         await deleteExpensesCash(id);
 
         return redirect(currentPath);
+      } catch (e) {
+        console.error(e);
+
+        return null;
+      }
+    }
+
+    case "save_preset": {
+      const content = JSON.parse(
+        formData.get("content") as string
+      ) as SettingPresetBaseType;
+
+      try {
+        await savePreset(content);
+
+        return null;
       } catch (e) {
         console.error(e);
 
@@ -113,7 +130,7 @@ const ExpensesList: FC = () => {
 
   const [edit, setEdit] = useState<ExpensesCashType | undefined>();
 
-  const onExpensesUpdate = async (
+  const onUpdateExpenses = async (
     date: string,
     type: ExpensesCash,
     memo: string,
@@ -140,7 +157,7 @@ const ExpensesList: FC = () => {
     );
   };
 
-  const onExpensesDelete = async () => {
+  const onDeleteExpenses = async () => {
     if (!edit) {
       return;
     }
@@ -149,6 +166,21 @@ const ExpensesList: FC = () => {
       {
         intent: "delete",
         id: edit.id,
+      },
+      {
+        method: "POST",
+      }
+    );
+  };
+
+  const onSavePreset = async (memo: string, amount: number) => {
+    submit(
+      {
+        intent: "save_preset",
+        content: JSON.stringify({
+          memo,
+          amount,
+        } satisfies SettingPresetBaseType),
       },
       {
         method: "POST",
@@ -306,9 +338,12 @@ const ExpensesList: FC = () => {
           expenses={edit}
           onClose={() => setEdit(undefined)}
           onSave={(date, type, memo, amount) =>
-            onExpensesUpdate(date, type, memo, amount)
+            onUpdateExpenses(date, type, memo, amount)
           }
-          onDelete={() => onExpensesDelete()}
+          onSavePreset={(memo: string, amount: number) =>
+            onSavePreset(memo, amount)
+          }
+          onDelete={() => onDeleteExpenses()}
         />
       )}
     </>

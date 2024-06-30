@@ -3,9 +3,10 @@ import { Flex } from "@chakra-ui/react";
 
 type Props = {
   children: ReactNode;
+  size?: "medium" | "large";
 };
 
-const AmountInputContainer: FC<Props> = ({ children }) => (
+const AmountInputContainer: FC<Props> = ({ children, size = "medium" }) => (
   <Flex
     fontFamily="amount"
     pos="relative"
@@ -20,10 +21,12 @@ const AmountInputContainer: FC<Props> = ({ children }) => (
         zIndex: 5,
       },
       ">input": {
-        h: "56px",
         bg: "white",
         rounded: "8px",
         textAlign: "right",
+        ...(size === "large" && {
+          h: "56px",
+        }),
       },
     }}
   >
