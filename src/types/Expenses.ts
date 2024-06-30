@@ -21,7 +21,7 @@ export type ExpensesCashlessSaveType = {
   date: string;
   category: ExpensesCash[];
   amount: number;
-  cashless: string;
+  target: string;
 };
 
 export type ExpensesCashType = MicroCMSType & ExpensesCashBaseType;

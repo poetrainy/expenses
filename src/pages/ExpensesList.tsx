@@ -223,7 +223,7 @@ const ExpensesList: FC = () => {
   };
 
   const onUpdateCashless = async (category: ExpensesCash, amount: number) => {
-    if (!editCashless) {
+    if (!editCashlessTarget) {
       return;
     }
 
@@ -235,7 +235,7 @@ const ExpensesList: FC = () => {
           content: JSON.stringify({
             date: editCashless.date,
             category: [category],
-            cashless: editCashless.id,
+            target: editCashless.id,
             amount,
           } satisfies ExpensesCashlessSaveType),
         },
@@ -250,7 +250,7 @@ const ExpensesList: FC = () => {
           content: JSON.stringify({
             date: `${params.year}-${params.month}-1`,
             category: [category],
-            cashless: editCashless.id,
+            target: editCashlessTarget.id,
             amount,
           } satisfies ExpensesCashlessSaveType),
         },
