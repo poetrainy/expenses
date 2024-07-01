@@ -372,7 +372,9 @@ const ExpensesList: FC = () => {
                   ))}
                 </ListContainer>
               ) : (
-                <Text>データが登録されていません。</Text>
+                <ListContainer as="div" p="32px 16px">
+                  <Text as="p">データはまだ登録されていません。</Text>
+                </ListContainer>
               )}
             </TabPanel>
             <TabPanel p={0}>

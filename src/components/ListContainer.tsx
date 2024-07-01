@@ -1,13 +1,9 @@
-import { FC, ReactNode } from "react";
-import { VStack } from "@chakra-ui/react";
+import { FC } from "react";
+import { StackProps, VStack } from "@chakra-ui/react";
 
-type Props = {
-  children: ReactNode;
-};
-
-const ListContainer: FC<Props> = ({ children }) => (
+const ListContainer: FC<StackProps> = (props) => (
   <VStack
-    as="ul"
+    as={props.as ?? "ul"}
     alignItems="stretch"
     gap={0}
     bg="white"
@@ -16,8 +12,9 @@ const ListContainer: FC<Props> = ({ children }) => (
     borderY="1px solid"
     borderTopColor="gray.100"
     borderBottomColor="gray.100"
+    {...props}
   >
-    {children}
+    {props.children}
   </VStack>
 );
 
